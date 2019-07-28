@@ -1,4 +1,4 @@
 #!/usr/bin/python
 
-import numpy as np #necessary with packages?
 import environment
+from environment.net import vertex, edge, net
