@@ -1,5 +1,3 @@
- import numpy as np #necessary with packages?
-
 class vertex: #save as array?
 	def __init__(self, ID, position, connections):
 		self.ID = ID #sequential number (from 0 to n-1 vertexes)
