@@ -1,0 +1,9 @@
+djikstra-Beauftragter: David
+
+Python-Implementierung im Internet:
+http://www.gilles-bertrand.com/2014/03/dijkstra-algorithm-python-example-source-code-shortest-path.html
+
+Wikipedia:
+https://de.wikipedia.org/wiki/Dijkstra-Algorithmus
+
+Doku folgt noch... 
