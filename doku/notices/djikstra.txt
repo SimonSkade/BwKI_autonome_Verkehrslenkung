@@ -6,4 +6,9 @@ http://www.gilles-bertrand.com/2014/03/dijkstra-algorithm-python-example-source-
 Wikipedia:
 https://de.wikipedia.org/wiki/Dijkstra-Algorithmus
 
-Doku folgt noch... 
+Grund-Idee:
+Du hast einen gerichteten Graphen, dessen Kanten gewichtet sind.
+Du willst von Konten A bis B kommen.
+Du nimmst Knoten A und gehst von ihm aus zum nächsten Knoten. Nächster Knoten: Der Knoten, der von A aus am wenigsten Gewicht hat. 
+Nimm so lange die nächsten Knoten von allen Knoten, zu denen du gekommen bist, bis du bei B bist.
+Warm servieren!
