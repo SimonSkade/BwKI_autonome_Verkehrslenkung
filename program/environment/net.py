@@ -1,84 +1,57 @@
 
 import numpy as np
 
-class vertex: #save as array?
-	def __init__(self, ID, net_id, position, connections):
-		self.ID = ID #sequential number (from 0 to n-1 vertexes)
-		self.net_id = net_id
-		self.position = position
-		self.connections = connections #IDs if adjacent vertexes
-		self.edgesIDs = {}
+class Vertex: #Stellt die Knoten im Netzwerk dar
+	def __init__(self, ID, position, connections):
+		self.ID = ID #Einfach eine sequenzielle Zahl; Der Index im Array network.vertexes
+		self.position = position #Koordinaten
+		self.connections = connections #Die IDs der Knoten, zu denen dieser Knoten direkt führt
+		self.edgesIDs = {} #Die IDs der Kanten, die von dem Knoten ausgehen
 
 	def add_edgeID(self, v2_id, edgeID):
 		self.edgesIDs[v2_id] = edgeID
 
-class edge:
-	def __init__(self, ID, net_id, v1_id, v2_id):
+class Edge: #Stellt die Kanten im Netzwerk dar
+	def __init__(self, ID, v1_id, v2_id, a, b, n_cars=0):
 		self.ID = ID
-		self.net_id = net_id
-		self.v1_id = v1_id
-		self.v2_id = v2_id
+		self.v1_id = v1_id #Startknoten
+		self.v2_id = v2_id #Endknoten
+		#Konstante Gewichtsparameter
+		self.a = a
+		self.b = b
+		#Anzahl der Autos auf der Kante
+		self.n_cars = n_cars
 
-	def set_params(self, a='random', b='dist', n_cars=0): #In __init__ function?
-		if a == 'random':
-			self.a = (np.random.rand()+0.1)*50 #adjust factor later
-		if b == 'dist':
-			self.dist = self.calc_dist(networks[self.net_id].vertexes[v1_id].position, networks[self.net_id].vertexes[v2_id].position)
-			self.b = self.dist
-		elif b == 'random':
-			self.b = (np.random.rand()+0.2)*10000 #adjust factor later
-		else:
-			self.b = b
-		if n_cars == 'random':
-			self.n_cars = round(np.random.rand()*1000)#adjust factor later
-		else:
-			self.n_cars = n_cars
-		self.weight = self.calc_weight()
-
-	def calc_weight(self): #later adjust function for more realistic simulation
-		assert self.a != None
-		assert self.b != None
-		assert self.n_cars != None
+	def calc_weight(self): #später weiter präzisieren
 		self.weight = self.a * self.n_cars + self.b
 
-	def calc_dist(self, P1, P2): #to adjust weights of streets to their length
+	def calc_dist(self, P1, P2): #Die Länge im Koordinatensystem #vielleicht nützlich für die automatische Generierung später
 		return np.sqrt(np.sum(np.sq(P1[0] - P2[0]), np.sq(P1[1] - P2[1])))
 
-class net:
-
-	def __init__(self, net_ID, graph, positions): #graph as dictionary like for example: {0: (1,3,4), 1:(0,4), 2:(4), 3:(0,1), 4:(0,1,2,3)}
-	#initialize graph
-		self.ID = net_ID
-		self.graph = graph
-		self.n_vertexes = len(self.graph)
-		self.vertexes = [] #Als Dictionary?
-		for i in range(self.n_vertexes):
-			self.vertexes.append(vertex(i, self.ID, positions[i], graph[i]))
-		self.edges = [] #Als Dictionary?
-		ID = 0
-		for v1_id, v1 in enumerate(self.vertexes): #v1_id == v1.ID
-			if type(self.graph[v1.ID]) == int:
-				self.graph[v1.ID] = [self.graph[v1.ID]]
-			for v2_id in self.graph[v1.ID]:
-				self.edges.append(edge(ID, self.ID, v1_id, v2_id))
-				v1.add_edgeID(v2_id, ID)
-				ID += 1
-		self.graph_matrix = np.zeros((self.n_vertexes, self.n_vertexes))
-
-	def initialize_weights(self, all_params=None): #vielleicht ändern, vielleicht in __init__
-		if all_params == None:
-			self.edges[:].set_params()
-		else:
-			for i, params in enumerate(all_params):
-				a, b, n_cars = params
-				self.edges[i].set_params(a, b, n_cars)
-		self.initialize_matrix()
-
-	def initialize_matrix(self):
+class Net:#Stellt das Netzwerk dar
+	def __init__(self, positions, data_a, data_b): #Initiert das Netzwerk #Eingabe als mehrere konstante Matrizen
+		self.fixed_params = [positions, data_a, data_b] #vermutlich nicht nötig
+		n_vertexes = np.shape(positions)[0]
+		self.vertexes = [] #Liste der Knoten
+		for i in range(n_vertexes):
+			connections = []
+			for j, relation in enumerate(data_a[i]):
+				if relation != 0:
+					connections.append(j)
+			self.vertexes.append(Vertex(i, positions[i], connections))
+		self.edges = [] #Liste der Kanten
+		edge_nr = 0
+		for i in range(n_vertexes):
+			for j in range(n_vertexes):
+				if data_a[i, j] != 0:
+					self.edges.append(Edge(edge_nr, i, j, data_a[i, j], data_b[i, j]))
+					self.vertexes[i].add_edgeID(j, edge_nr)
+					edge_nr += 1
+		self.graph_matrix = np.zeros((n_vertexes, n_vertexes)) #Variable Matrix
 		for edge in self.edges:
 			self.graph_matrix[edge.v1, edge.v2] = edge.calc_weight()
 
-	######car management################connect to class car later########
+	######car management################später muss das noch mit der Klasse Car, bzw. den Autos verknüpft werden########
 	def add_car(self, edge, num=1):
 		edge.n_cars += num
 		edge.calc_weight()
@@ -90,13 +63,9 @@ class net:
 		self.graph_matrix[edge.v1.ID, edge.v2.ID] = edge.weight
 	######################################
 
-	#def plot(): #should plot the network
 
 
-#test
-graph = {0: (1,3), 1:(0,2,3), 2:(3), 3:(0,1)}
-positions = ((100,100), (200,400), (500,350), (400,50))
+def initialize_network(positions, data_a, data_b):
+	network = Net(positions, data_a, data_b)
+	print(network.vertexes[0].position, network.edges[0].v1_id, network.edges[0].v2_id) #als test
 
-networks = {}
-networks['test'] = net('test', graph, positions)
-print(networks['test'].graph, networks['test'].vertexes[0].position, networks['test'].edges[3].v1_id, networks['test'].edges[3].v2_id)
