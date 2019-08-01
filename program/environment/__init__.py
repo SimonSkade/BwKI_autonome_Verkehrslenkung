@@ -9,6 +9,19 @@ AUTO_GENERATE_RATE = 0.1
 cars = []
 action_plan = []
 
+def binary_search_action_plan(new_cycle_nr):
+	l = 0
+	r = len(action_plan) - 1
+	while r - l >= 0:
+		m = l + (r-l) // 2
+		if action_plan[m].cycle_nr == new_cycle_nr:
+			return m
+		elif new_cycle_nr < action_plan[m].cycle_nr:
+			r = m - 1
+		else:
+			l = m + 1
+	return m
+
 class Action:
 	def __init__(self, edge_ID, actual_cycle, car_ID):
 		self.edge_ID = edge_ID
@@ -28,9 +41,10 @@ class Action:
 			net.network.add_car(self.edge_ID)
 			#update die adjazenzmatrix
 			net.network.graph_matrix[net.network.edges[self.edge_ID].v1_id, net.network.edges[self.edge_ID].v2_id] = net.network.edges[self.edge_ID].calc_weight()
+			#create a new action
 			new_action = Action(self.edge_ID, actual_cycle, self.car_ID)
-			
-
+			index = binary_search_action_plan(new_action.cycle_nr)
+			action_plan.insert(index, new_action)
 
 		else:
 			net.network.remove_car(self.edge_ID)
@@ -63,11 +77,8 @@ def initialize_network(file): #Liest die benötigten Daten aus einer Datei ein u
 def start_simulation(MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION, GRAPHICAL_UPDATE_PERIOD, AUTO_GENERATE_RATE):
 	for i in range(MAX_CYCLES):
 		while action_plan[0].cycle_nr == i: #ggf vorgesehene Aktionen ausführen
-			#Aktionen ausführen
-			#ggf neue Aktion generieren
-			#ggf neue Aktion in action_plan einsortieren
-			#del action_plan[0]
-			pass
+			action_plan[0].perform_action()
+			del action_plan[0]
 
 		if i % GRAPHICAL_UPDATE_PERIOD == 0:
 			if SHOW_GRAPHICAL_SIMULATION:
