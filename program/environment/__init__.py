@@ -35,7 +35,28 @@ def start_simulation(MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION, GRAPHICAL_UPDATE_PER
 			#ggf neue Aktion generieren
 			#ggf neue Aktion in action_plan einsortieren
 			#del action_plan[0]
+			pass
 
 		if i % GRAPHICAL_UPDATE_PERIOD == 0:
 			if SHOW_GRAPHICAL_SIMULATION:
 				pass #hier soll dann die Graphische Ausgabe geupdated werden
+
+def static_network_plot():
+	edges = net.network.edges
+	vertexes = net.network.vertexes
+	all_nodes_x = []
+	all_nodes_y = []
+	for node in vertexes:
+		all_nodes_x.append(node.position[0])
+		all_nodes_y.append(node.position[1])
+	all_edges_x = []
+	all_edges_y = []
+	for edge in edges:
+		all_edges_x.append(vertexes[edge.v1_id].position[0])
+		all_edges_x.append(vertexes[edge.v2_id].position[0])
+		all_edges_x.append(None)
+		all_edges_y.append(vertexes[edge.v1_id].position[1])
+		all_edges_y.append(vertexes[edge.v2_id].position[1])
+		all_edges_y.append(None)
+	graphical_output.plot_static(all_edges_x, all_edges_y, all_nodes_x, all_nodes_y)
+
