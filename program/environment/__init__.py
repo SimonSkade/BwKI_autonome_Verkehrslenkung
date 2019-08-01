@@ -6,8 +6,40 @@ SHOW_GRAPHICAL_SIMULATION = False
 GRAPHICAL_UPDATE_PERIOD = 100
 AUTO_GENERATE_RATE = 0.1
 
+cars = []
+action_plan = []
+
 class Action:
-	pass
+	def __init__(self, edge_ID, actual_cycle, car_ID):
+		self.edge_ID = edge_ID
+		self.cycle_nr = net.network.edges[edge_ID].weight + actual_cycle
+		self.car_ID = car_ID
+		self.future_edges = cars[self.car_ID].future_edges
+
+	def perform_action(self, actual_cycle):
+		assert self.cycle_nr == actual_cycle
+		if cars[self.car_ID].future_edges:
+			net.network.remove_car(self.edge_ID)
+			#update die adjazenzmatrix
+			net.network.graph_matrix[net.network.edges[self.edge_ID].v1_id, net.network.edges[self.edge_ID].v2_id] = net.network.edges[self.edge_ID].calc_weight()
+			self.edge_ID = cars[self.car_ID].future_edges[0]
+			cars[self.car_ID].actual_edge = self.edge_ID
+			del cars[self.car_ID].future_edges[0]
+			net.network.add_car(self.edge_ID)
+			#update die adjazenzmatrix
+			net.network.graph_matrix[net.network.edges[self.edge_ID].v1_id, net.network.edges[self.edge_ID].v2_id] = net.network.edges[self.edge_ID].calc_weight()
+			new_action = Action(self.edge_ID, actual_cycle, self.car_ID)
+			
+
+
+		else:
+			net.network.remove_car(self.edge_ID)
+			#update die adjazenzmatrix
+			net.network.graph_matrix[net.network.edges[self.edge_ID].v1_id, net.network.edges[self.edge_ID].v2_id] = net.network.edges[self.edge_ID].calc_weight()
+
+
+
+
 
 
 def initialize_network(file): #Liest die benötigten Daten aus einer Datei ein und gibt diese weiter zur Netzwerk-Initialisierung

@@ -53,12 +53,14 @@ class Net:#Stellt das Netzwerk dar
 			self.graph_matrix[edge.v1_id, edge.v2_id] = edge.calc_weight()
 
 	######car management################später muss das noch mit der Klasse Car, bzw. den Autos verknüpft werden########
-	def add_car(self, edge, num=1):
+	def add_car(self, edge_ID, num=1):
+		edge = self.edges[edge_ID]
 		edge.n_cars += num
 		edge.calc_weight()
 		self.graph_matrix[edge.v1.ID, edge.v2.ID] = edge.weight
 
-	def remove_car(self, edge, num=1):
+	def remove_car(self, edge_ID, num=1):
+		edge = self.edges[edge_ID]
 		edge.n_cars -= num
 		edge.calc_weight()
 		self.graph_matrix[edge.v1.ID, edge.v2.ID] = edge.weight
