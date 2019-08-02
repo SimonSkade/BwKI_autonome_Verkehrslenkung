@@ -24,7 +24,7 @@ class Edge: #Stellt die Kanten im Netzwerk dar
 		self.calc_weight()
 
 	def calc_weight(self): #später weiter präzisieren
-		self.weight = self.a * self.n_cars + self.b
+		self.weight = round(self.a * self.n_cars + self.b)
 
 	def calc_dist(self, P1, P2): #Die Länge im Koordinatensystem #vielleicht nützlich für die automatische Generierung später
 		return np.sqrt(np.sum(np.sq(P1[0] - P2[0]), np.sq(P1[1] - P2[1])))

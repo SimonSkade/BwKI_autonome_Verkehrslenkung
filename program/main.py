@@ -10,6 +10,3 @@ if __name__=='__main__': #kann man das auch noch anders kontrollieren, dass ein 
 	environment.manual_simulation(input_file_cars)
 	#environment.automatic_simulation()
 
-
-
-

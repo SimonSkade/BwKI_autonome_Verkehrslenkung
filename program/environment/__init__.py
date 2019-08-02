@@ -92,6 +92,7 @@ def manual_simulation(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATI
 				end_nodes = colums[2].split(",")
 				end_node_ids = (int(node) for node in end_nodes)
 		return cycle_numbers, start_node_ids, end_node_ids
+		
 	cycle_numbers, start_node_ids, end_node_ids = extract_data_from_file(input_file) #output muss sortiert sein
 	for cycle in range(MAX_CYCLES):
 		if cycle_numbers[0] == cycle:
