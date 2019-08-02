@@ -12,28 +12,15 @@ def plot_static(all_edges_x, all_edges_y, all_nodes_x, all_nodes_y):
 	node_trace = go.Scatter(
     x=all_nodes_x, y=all_nodes_y,
     mode='markers',
-    hoverinfo='text',
+    hovertext=["Text A", "Text B", "Text C", "Text D", "Text E"],
+    hoverinfo="text",
     marker=dict(
-        showscale=True,
-        # colorscale options
-        #'Greys' | 'YlGnBu' | 'Greens' | 'YlOrRd' | 'Bluered' | 'RdBu' |
-        #'Reds' | 'Blues' | 'Picnic' | 'Rainbow' | 'Portland' | 'Jet' |
-        #'Hot' | 'Blackbody' | 'Earth' | 'Electric' | 'Viridis' |
-        colorscale='YlGnBu',
-        reversescale=True,
-        color=[],
-        size=10,
-        colorbar=dict(
-            thickness=15,
-            title='Node Connections',
-            xanchor='left',
-            titleside='right'
-        ),
-        line_width=2))
+        color="green"
+    ))
 
 	fig = go.Figure(data=[edge_trace, node_trace],
              layout=go.Layout(
-                title='<br>Network graph made with Python',
+                title='<br>BWKI KIndsköpfe - Autonomes Straßennetz',
                 titlefont_size=16,
                 showlegend=False,
                 hovermode='closest',
