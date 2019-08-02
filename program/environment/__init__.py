@@ -10,25 +10,30 @@ cars = {}
 number_cars_generated = 0
 action_plan = []
 
-def binary_search_action_plan(new_cycle_nr):
+def binary_search(sorted_array, element):
 	l = 0
-	r = len(action_plan) - 1
+	r = len(sorted_array) - 1
+	if element > sorted_array[-1]:
+		return r + 1
 	while r - l >= 0:
 		m = l + (r-l) // 2
-		if action_plan[m].cycle_nr == new_cycle_nr:
+		if sorted_array[m].cycle_nr == element:
 			return m
-		elif new_cycle_nr < action_plan[m].cycle_nr:
+		elif element < sorted_array[m].cycle_nr:
 			r = m - 1
 		else:
 			l = m + 1
-	return m
+	return m 
+
+def binary_search_action_plan(new_cycle_nr):
+	sorted_array = action_plan[:].cycle_nr
+	return binary_search(sorted_array, new_cycle_nr)	
 
 class Action:
-	def __init__(self, edge_ID, actual_cycle, car_ID):
-		self.edge_ID = edge_ID
-		self.cycle_nr = net.network.edges[edge_ID].weight + actual_cycle
+	def __init__(self, actual_cycle, car_ID):
 		self.car_ID = car_ID
-		self.future_edge_IDs = cars[self.car_ID].future_edge_IDs
+		self.edge_ID = cars[car_ID].actual_edge
+		self.cycle_nr = net.network.edges[edge_ID].weight + actual_cycle
 
 	def perform_action(self, actual_cycle):
 		assert self.cycle_nr == actual_cycle
@@ -43,7 +48,7 @@ class Action:
 			#update die adjazenzmatrix
 			net.network.graph_matrix[net.network.edges[self.edge_ID].v1_id, net.network.edges[self.edge_ID].v2_id] = net.network.edges[self.edge_ID].calc_weight()
 			#create a new action
-			new_action = Action(self.edge_ID, actual_cycle, self.car_ID)
+			new_action = Action(actual_cycle, self.car_ID)
 			index = binary_search_action_plan(new_action.cycle_nr)
 			action_plan.insert(index, new_action)
 
@@ -74,14 +79,26 @@ def initialize_network(file): #Liest die benötigten Daten aus einer Datei ein u
 
 def manual_simulation(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_GRAPHICAL_SIMULATION, GRAPHICAL_UPDATE_PERIOD=GRAPHICAL_UPDATE_PERIOD):
 	def extract_data_from_file(input_file):
-		pass #hier sollen die Daten von dem File extrahiert werden #TODO
+		cycle_numbers, start_node_ids, end_node_ids = [], [], []
+		with open(input_file, "r") as f:
+			data = f.read()
+			lines = data.split("\n")
+			for line in lines:
+				columns = line.split(" ")
+				cycle_nr = int(columns[0])
+				index = binary_search(cycle_numbers, cycle_nr)
+				cycle_numbers.insert(index, cycle_nr)
+				start_node_ids.insert(index, int(columns[1]))
+				end_nodes = colums[2].split(",")
+				end_node_ids = (int(node) for node in end_nodes)
+		return cycle_numbers, start_node_ids, end_node_ids
 	cycle_numbers, start_node_ids, end_node_ids = extract_data_from_file(input_file) #output muss sortiert sein
 	for cycle in range(MAX_CYCLES):
 		if cycle_numbers[0] == cycle:
 			new_car = cars.Car(number_cars_generated, start_node_ids[0], end_node_ids[0])
 			cars[number_cars_generated] = new_car
 			#Aktion generieren
-			new_action = Action(new_car.actual_edge, cycle, number_cars_generated)
+			new_action = Action(cycle, number_cars_generated)
 			index = binary_search_action_plan(new_action.cycle_nr)
 			action_plan.insert(index, new_action)
 			number_cars_generated += 1
@@ -89,9 +106,10 @@ def manual_simulation(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATI
 			del start_node_ids[0]
 			del end_node_id[0]
 
-		while action_plan[0].cycle_nr == cycle: #ggf vorgesehene Aktionen ausführen
-			action_plan[0].perform_action()
-			del action_plan[0]
+		if action_plan: #ansonsten Indexerror #möglicherweise auch einfach eine Action schon in die Liste legen
+			while action_plan[0].cycle_nr == cycle: #ggf vorgesehene Aktionen ausführen
+				action_plan[0].perform_action(cycle)
+				del action_plan[0]
 
 		if cycle % GRAPHICAL_UPDATE_PERIOD == 0:
 			if SHOW_GRAPHICAL_SIMULATION:
@@ -108,14 +126,15 @@ def automatic_simulation(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_G
 			new_car = cars.Car(number_cars_generated, start_node_id, end_node_id)
 			cars[number_cars_generated] = new_car
 			#Aktion generieren
-			new_action = Action(new_car.actual_edge, cycle, number_cars_generated)
+			new_action = Action(cycle, number_cars_generated)
 			index = binary_search_action_plan(new_action.cycle_nr)
 			action_plan.insert(index, new_action)
 			number_cars_generated += 1
 
-		while action_plan[0].cycle_nr == cycle: #ggf vorgesehene Aktionen ausführen
-			action_plan[0].perform_action(cycle)
-			del action_plan[0]
+		if action_plan: #ansonsten Indexerror
+			while action_plan[0].cycle_nr == cycle: #ggf vorgesehene Aktionen ausführen
+				action_plan[0].perform_action(cycle)
+				del action_plan[0]
 
 		if cycle % GRAPHICAL_UPDATE_PERIOD == 0:
 			if SHOW_GRAPHICAL_SIMULATION:

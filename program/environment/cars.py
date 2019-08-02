@@ -1,9 +1,9 @@
 
 class Car:
-	def __init__(self, ID, start_node_ID, dest_node_ID, edge_IDs=None):
+	def __init__(self, ID, start_node_ID, end_node_IDs, edge_IDs=None):
 		self.ID = ID
 		self.start_node_ID = start_node_ID
-		self.end_node_ID = end_node_ID
+		self.end_node_IDs = end_node_IDs #typically just one node; is a tuple
 		self.djikstra()
 		#####nicht nötig, wird in Djikstra generiert###########
 		if edge_IDs:
