@@ -9,7 +9,7 @@ cars = {}
 number_cars_generated = 0
 action_plan = []
 
-def binary_search(sorted_array, element):
+def binary_search(sorted_array, element):#findet den Index eines Elements in einem sortierten array
 	l = 0
 	r = len(sorted_array) - 1
 	if sorted_array == []:
@@ -26,41 +26,32 @@ def binary_search(sorted_array, element):
 			l = m + 1
 	return m 
 
-def binary_search_action_plan(new_cycle_nr):
+def binary_search_action_plan(new_cycle_nr):#binary_search für Aktionen
 	sorted_array = [x.cycle_nr for x in action_plan]
 	return binary_search(sorted_array, new_cycle_nr)	
 
-class Action:
+class Action:#Stellt einen Kantenwechsel eines Autos zu einer bestimmten Zeit dar
 	def __init__(self, actual_cycle, car_ID):
 		self.car_ID = car_ID
 		self.edge_ID = cars[car_ID].actual_edge
 		self.cycle_nr = net.network.edges[self.edge_ID].weight + actual_cycle
 
-	def perform_action(self, actual_cycle):
-		assert self.cycle_nr == actual_cycle
+	def perform_action(self, actual_cycle): #führt die Aktion aus
+		#assert self.cycle_nr == actual_cycle
 		if cars[self.car_ID].future_edge_IDs:
 			net.network.remove_car(self.edge_ID)
-			#update die adjazenzmatrix
-			##net.network.edges[self.edge_ID].calc_weight()
-			##net.network.graph_matrix[net.network.edges[self.edge_ID].v1_id, net.network.edges[self.edge_ID].v2_id] = net.network.edges[self.edge_ID].weight
 			self.edge_ID = cars[self.car_ID].future_edge_IDs[0]
 			cars[self.car_ID].actual_edge = self.edge_ID
 			del cars[self.car_ID].future_edge_IDs[0]
 			net.network.add_car(self.edge_ID)
-			#update die adjazenzmatrix
-			##net.network.edges[self.edge_ID].calc_weight()
-			##net.network.graph_matrix[net.network.edges[self.edge_ID].v1_id, net.network.edges[self.edge_ID].v2_id] = net.network.edges[self.edge_ID].weight
-			#create a new action
+			#Erstelle eine neue Aktion für den nächsten Kantenwechsel
 			new_action = Action(actual_cycle, self.car_ID)
 			index = binary_search_action_plan(new_action.cycle_nr)
 			action_plan.insert(index, new_action)
 
-		else:
+		else:#Das Auto hat sein Ziel erreicht
 			net.network.remove_car(self.edge_ID)
-			#update die adjazenzmatrix
-			net.network.edges[self.edge_ID].calc_weight()
-			net.network.graph_matrix[net.network.edges[self.edge_ID].v1_id, net.network.edges[self.edge_ID].v2_id] = net.network.edges[self.edge_ID].weight
-			del cars[self.car_ID]
+			del cars[self.car_ID] #Lösche das Auto
 
 
 def initialize_network(file): #Liest die benötigten Daten aus einer Datei ein und gibt diese weiter zur Netzwerk-Initialisierung
@@ -82,6 +73,7 @@ def initialize_network(file): #Liest die benötigten Daten aus einer Datei ein u
 		data_b = read_matrix(data[2])
 	net.initialize_network(positions, data_a, data_b)
 
+#Simuliert die Verkehrsströme wie in einem input file vorgegeben
 def manual_simulation(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_GRAPHICAL_SIMULATION, GRAPHICAL_UPDATE_PERIOD=GRAPHICAL_UPDATE_PERIOD):
 	from . import car
 	def extract_data_from_file(input_file):
@@ -125,7 +117,7 @@ def manual_simulation(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATI
 				pass #hier soll dann die Graphische Ausgabe geupdated werden
 
 
-
+#Simuliert Netzwerkströme automatisch
 def automatic_simulation(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_GRAPHICAL_SIMULATION, GRAPHICAL_UPDATE_PERIOD=GRAPHICAL_UPDATE_PERIOD, AUTO_GENERATE_RATE=AUTO_GENERATE_RATE):
 	from . import car
 	number_cars_generated = 0
@@ -154,6 +146,7 @@ def automatic_simulation(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_G
 			if SHOW_GRAPHICAL_SIMULATION:
 				pass #hier soll dann die Graphische Ausgabe geupdated werden
 
+#plottet das Netzwerk zu einem gewissen Zeitpunkt
 def static_network_plot():
 	from . import graphical_output
 	edges = net.network.edges

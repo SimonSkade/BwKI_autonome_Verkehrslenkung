@@ -4,23 +4,19 @@ import numpy as np
 graph_matrix = net.network.graph_matrix
 vertexes = net.network.vertexes
 
-class Car:
+class Car: #Objekte von Car stellen Autos dar
 	def __init__(self, ID, start_node_ID, end_node_IDs, edge_IDs=None):
 		self.ID = ID
 		self.start_node_ID = start_node_ID
-		self.end_node_IDs = end_node_IDs #typically just one node; is a tuple
+		self.end_node_IDs = end_node_IDs #Ist eine Liste!, auch wenn es meistens nur ein Element enthält
 		self.future_edge_ids = []
-		# if len(self.end_node_IDs) == 1:
-		# 	self.djikstra(self.start_node_ID, self.end_node_IDs[0])
-		# else:
-		for i in range(len(self.end_node_IDs) - 1, 0, -1):
+		for i in range(len(self.end_node_IDs) - 1, 0, -1): #Pfade von Zwischenknoten zum Endknoten berechnen
 			self.djikstra(self.end_node_IDs[i-1], self.end_node_IDs[i])
-		self.djikstra(self.start_node_ID, self.end_node_IDs[0])
+		self.djikstra(self.start_node_ID, self.end_node_IDs[0])# Pfad von Startknoten zum (ersten) Emdknoten berechnen
 		self.actual_edge = self.future_edge_ids[0]
 		self.future_edge_IDs = self.future_edge_ids[1:]
 
-	def djikstra(self, start_node_ID, end_node_ID): #calculates shortest path and sets self.future_edge_ids
-		num_nodes = graph_matrix.shape[0]
+	def djikstra(self, start_node_ID, end_node_ID): #berechnet den schnellsten Pfad und speichert die zukünftig abgefahrenen Kanten
 		actual_node_ID = start_node_ID
 		actual_node_value = 0
 		predecessor = np.zeros((num_nodes), dtype='int32')

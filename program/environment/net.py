@@ -52,23 +52,22 @@ class Net:#Stellt das Netzwerk dar
 		for edge in self.edges:
 			self.graph_matrix[edge.v1_id, edge.v2_id] = edge.weight
 
-	######car management################später muss das noch mit der Klasse Car, bzw. den Autos verknüpft werden########
+	#Netzwerk anpassen, wenn ein Auto auf eine Kante kommt
 	def add_car(self, edge_ID, num=1):
 		edge = self.edges[edge_ID]
 		edge.n_cars += num
 		edge.calc_weight()
 		self.graph_matrix[edge.v1_id, edge.v2_id] = edge.weight
 
+	#Netzwerk anpassen, wenn ein Auto eine Kante verlässt
 	def remove_car(self, edge_ID, num=1):
 		edge = self.edges[edge_ID]
 		edge.n_cars -= num
 		edge.calc_weight()
 		self.graph_matrix[edge.v1_id, edge.v2_id] = edge.weight
-	######################################
 
 
-
-def initialize_network(positions, data_a, data_b):
+def initialize_network(positions, data_a, data_b):#initiert das Netzwerk
 	global network
 	network = Net(positions, data_a, data_b)
 
