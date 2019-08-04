@@ -7,6 +7,6 @@ if __name__=='__main__': #kann man das auch noch anders kontrollieren, dass ein 
 	input_file_cars = "../manual_example_data/test_einlesedatei_autos.txt"
 	environment.initialize_network(input_file_network)
 	environment.static_network_plot()
-	environment.manual_simulation(input_file_cars)
+	#environment.manual_simulation(input_file_cars)
 	#environment.automatic_simulation()
 

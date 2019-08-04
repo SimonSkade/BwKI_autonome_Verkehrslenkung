@@ -2,17 +2,17 @@
 import plotly.graph_objects as go
 
 
-def plot_static(all_edges_x, all_edges_y, all_nodes_x, all_nodes_y):
+def plot_static(all_edges_x, all_edges_y, all_nodes_x, all_nodes_y, vertexes, edges):
 	edge_trace = go.Scatter(
     x=all_edges_x, y=all_edges_y,
-    line=dict(width=0.5, color='#888'),
+    line=dict(width=0.5, color='#888', shape="spline"),
     hoverinfo='none',
     mode='lines')
 
 	node_trace = go.Scatter(
     x=all_nodes_x, y=all_nodes_y,
     mode='markers',
-    hovertext=["Text A", "Text B", "Text C", "Text D", "Text E"],
+    hovertext=["Knoten " + str(x.ID) + "\n" + "--> " + str(x.connections) for x in vertexes],
     hoverinfo="text",
     marker=dict(
         color="green"

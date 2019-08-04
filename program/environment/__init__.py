@@ -158,5 +158,5 @@ def static_network_plot():
 		all_edges_y.append(vertexes[edge.v1_id].position[1])
 		all_edges_y.append(vertexes[edge.v2_id].position[1])
 		all_edges_y.append(None)
-	graphical_output.plot_static(all_edges_x, all_edges_y, all_nodes_x, all_nodes_y)
+	graphical_output.plot_static(all_edges_x, all_edges_y, all_nodes_x, all_nodes_y, vertexes, edges)
 
