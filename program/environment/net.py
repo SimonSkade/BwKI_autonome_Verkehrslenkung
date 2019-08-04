@@ -50,20 +50,20 @@ class Net:#Stellt das Netzwerk dar
 					edge_nr += 1
 		self.graph_matrix = np.zeros((n_vertexes, n_vertexes)) #Variable Matrix
 		for edge in self.edges:
-			self.graph_matrix[edge.v1_id, edge.v2_id] = edge.calc_weight()
+			self.graph_matrix[edge.v1_id, edge.v2_id] = edge.weight
 
 	######car management################später muss das noch mit der Klasse Car, bzw. den Autos verknüpft werden########
 	def add_car(self, edge_ID, num=1):
 		edge = self.edges[edge_ID]
 		edge.n_cars += num
 		edge.calc_weight()
-		self.graph_matrix[edge.v1.ID, edge.v2.ID] = edge.weight
+		self.graph_matrix[edge.v1_id, edge.v2_id] = edge.weight
 
 	def remove_car(self, edge_ID, num=1):
 		edge = self.edges[edge_ID]
 		edge.n_cars -= num
 		edge.calc_weight()
-		self.graph_matrix[edge.v1.ID, edge.v2.ID] = edge.weight
+		self.graph_matrix[edge.v1_id, edge.v2_id] = edge.weight
 	######################################
 
 
@@ -71,5 +71,4 @@ class Net:#Stellt das Netzwerk dar
 def initialize_network(positions, data_a, data_b):
 	global network
 	network = Net(positions, data_a, data_b)
-	print(network.vertexes[0].position, network.edges[0].v1_id, network.edges[0].v2_id) #als test
 
