@@ -10,5 +10,6 @@ Grund-Idee:
 Du hast einen gerichteten Graphen, dessen Kanten gewichtet sind.
 Du willst von Konten A bis B kommen.
 Du nimmst Knoten A und gehst von ihm aus zum nächsten Knoten. Nächster Knoten: Der Knoten, der von A aus am wenigsten Gewicht hat. 
+Ein nächster Knoten kann aber nicht schon besucht worden sein.
 Nimm so lange die nächsten Knoten von allen Knoten, zu denen du gekommen bist, bis du bei B bist.
 Warm servieren!
