@@ -20,7 +20,6 @@ class Car:
 		self.future_edge_IDs = self.future_edge_ids[1:]
 
 	def djikstra(self, start_node_ID, end_node_ID): #calculates shortest path and sets self.future_edge_ids
-		print(graph_matrix)
 		num_nodes = graph_matrix.shape[0]
 		actual_node_ID = start_node_ID
 		actual_node_value = 0
@@ -29,12 +28,10 @@ class Car:
 		for node in	range(num_nodes):
 			if node != start_node_ID:
 				unvisited[node] = float("Inf")
-		print("unvisited 1: ", unvisited)
 		for i, weight in enumerate(graph_matrix[actual_node_ID]):
 			if weight != 0:
 				unvisited[i] = weight
 				predecessor[i] = actual_node_ID
-		print("unvisited 2: ", unvisited)
 		while unvisited:
 			min_node_value = float("Inf")
 			for key, value in unvisited.items():
@@ -42,7 +39,6 @@ class Car:
 					min_node_value = value
 					actual_node_ID = key
 					actual_node_value = value
-			print("unvisited 3: ", unvisited)
 			del unvisited[actual_node_ID]
 			if actual_node_ID == end_node_ID:
 				break

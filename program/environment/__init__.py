@@ -1,6 +1,6 @@
 import numpy as np
 
-MAX_CYCLES = 10_000_000
+MAX_CYCLES = 100000
 SHOW_GRAPHICAL_SIMULATION = False
 GRAPHICAL_UPDATE_PERIOD = 100
 AUTO_GENERATE_RATE = 0.1
@@ -18,9 +18,9 @@ def binary_search(sorted_array, element):
 		return r + 1
 	while r - l >= 0:
 		m = l + (r-l) // 2
-		if sorted_array[m].cycle_nr == element:
+		if sorted_array[m] == element:
 			return m
-		elif element < sorted_array[m].cycle_nr:
+		elif element < sorted_array[m]:
 			r = m - 1
 		else:
 			l = m + 1
@@ -41,13 +41,15 @@ class Action:
 		if cars[self.car_ID].future_edge_IDs:
 			net.network.remove_car(self.edge_ID)
 			#update die adjazenzmatrix
-			net.network.graph_matrix[net.network.edges[self.edge_ID].v1_id, net.network.edges[self.edge_ID].v2_id] = net.network.edges[self.edge_ID].calc_weight()
+			##net.network.edges[self.edge_ID].calc_weight()
+			##net.network.graph_matrix[net.network.edges[self.edge_ID].v1_id, net.network.edges[self.edge_ID].v2_id] = net.network.edges[self.edge_ID].weight
 			self.edge_ID = cars[self.car_ID].future_edge_IDs[0]
 			cars[self.car_ID].actual_edge = self.edge_ID
 			del cars[self.car_ID].future_edge_IDs[0]
 			net.network.add_car(self.edge_ID)
 			#update die adjazenzmatrix
-			net.network.graph_matrix[net.network.edges[self.edge_ID].v1_id, net.network.edges[self.edge_ID].v2_id] = net.network.edges[self.edge_ID].calc_weight()
+			##net.network.edges[self.edge_ID].calc_weight()
+			##net.network.graph_matrix[net.network.edges[self.edge_ID].v1_id, net.network.edges[self.edge_ID].v2_id] = net.network.edges[self.edge_ID].weight
 			#create a new action
 			new_action = Action(actual_cycle, self.car_ID)
 			index = binary_search_action_plan(new_action.cycle_nr)
@@ -56,7 +58,8 @@ class Action:
 		else:
 			net.network.remove_car(self.edge_ID)
 			#update die adjazenzmatrix
-			net.network.graph_matrix[net.network.edges[self.edge_ID].v1_id, net.network.edges[self.edge_ID].v2_id] = net.network.edges[self.edge_ID].calc_weight()
+			net.network.edges[self.edge_ID].calc_weight()
+			net.network.graph_matrix[net.network.edges[self.edge_ID].v1_id, net.network.edges[self.edge_ID].v2_id] = net.network.edges[self.edge_ID].weight
 			del cars[self.car_ID]
 
 
@@ -98,24 +101,26 @@ def manual_simulation(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATI
 	number_cars_generated = 0
 	cycle_numbers, start_node_ids, end_node_ids = extract_data_from_file(input_file) #output muss sortiert sein
 	for cycle in range(MAX_CYCLES):
-		if cycle_numbers[0] == cycle:
-			new_car = car.Car(number_cars_generated, start_node_ids[0], end_node_ids[0])
-			cars[number_cars_generated] = new_car
-			#Aktion generieren
-			new_action = Action(cycle, number_cars_generated)
-			index = binary_search_action_plan(new_action.cycle_nr)
-			action_plan.insert(index, new_action)
-			number_cars_generated += 1
-			del cycle_numbers[0]
-			del start_node_ids[0]
-			del end_node_ids[0]
 		try:
+			if cycle_numbers[0] == cycle:
+				new_car = car.Car(number_cars_generated, start_node_ids[0], end_node_ids[0])
+				net.network.add_car(new_car.actual_edge)
+				cars[number_cars_generated] = new_car
+				#Aktion generieren
+				new_action = Action(cycle, number_cars_generated)
+				index = binary_search_action_plan(new_action.cycle_nr)
+				action_plan.insert(index, new_action)
+				number_cars_generated += 1
+				del cycle_numbers[0]
+				del start_node_ids[0]
+				del end_node_ids[0]
 			while action_plan[0].cycle_nr == cycle: #ggf vorgesehene Aktionen ausführen
 				action_plan[0].perform_action(cycle)
 				del action_plan[0]
 		except IndexError:
 			pass
 		if cycle % GRAPHICAL_UPDATE_PERIOD == 0:
+			#print(f"Now reached cycle {cycle}. Number of cars simulated: {number_cars_generated}")
 			if SHOW_GRAPHICAL_SIMULATION:
 				pass #hier soll dann die Graphische Ausgabe geupdated werden
 
@@ -123,25 +128,29 @@ def manual_simulation(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATI
 
 def automatic_simulation(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_GRAPHICAL_SIMULATION, GRAPHICAL_UPDATE_PERIOD=GRAPHICAL_UPDATE_PERIOD, AUTO_GENERATE_RATE=AUTO_GENERATE_RATE):
 	from . import car
+	number_cars_generated = 0
 	for cycle in range(MAX_CYCLES):
 		if np.random.rand() < AUTO_GENERATE_RATE:
 			start_node_id, end_node_id = None, None
 			while start_node_id == end_node_id:
-				start_node_id, end_node_id = np.random.choice([x for x in range(len(net.network.vertexes))], size=2) #möglicherweise später ändern, dass mehrere End_nodes abgefahren werden
+				start_node_id = np.random.choice([x for x in range(len(net.network.vertexes))])
+				end_node_id = [np.random.choice([x for x in range(len(net.network.vertexes))])] #später noch mehrere End_nodes ermöglichen
 			new_car = car.Car(number_cars_generated, start_node_id, end_node_id)
+			net.network.add_car(new_car.actual_edge)
 			cars[number_cars_generated] = new_car
 			#Aktion generieren
 			new_action = Action(cycle, number_cars_generated)
 			index = binary_search_action_plan(new_action.cycle_nr)
 			action_plan.insert(index, new_action)
 			number_cars_generated += 1
-
-		if action_plan: #ansonsten Indexerror
+		try:
 			while action_plan[0].cycle_nr == cycle: #ggf vorgesehene Aktionen ausführen
 				action_plan[0].perform_action(cycle)
 				del action_plan[0]
-
+		except IndexError:
+			pass
 		if cycle % GRAPHICAL_UPDATE_PERIOD == 0:
+			print(f"Now reached cycle {cycle}. Number of cars simulated: {number_cars_generated}")
 			if SHOW_GRAPHICAL_SIMULATION:
 				pass #hier soll dann die Graphische Ausgabe geupdated werden
 

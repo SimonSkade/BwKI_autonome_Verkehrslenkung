@@ -6,12 +6,8 @@ if __name__=='__main__': #kann man das auch noch anders kontrollieren, dass ein 
 	input_file_network = "../manual_example_data/test_Einlesedatei_netzwerk.txt" #muss später noch allgemein fürs repo funktionieren, nicht nur für meinen PC, ist aber nur ein test #später mit sys?
 	input_file_cars = "../manual_example_data/test_einlesedatei_autos.txt"
 	environment.initialize_network(input_file_network)
-<<<<<<< HEAD
 	environment.static_network_plot()
 	#environment.manual_simulation(input_file_cars)
-=======
-	#environment.static_network_plot()
-	environment.manual_simulation(input_file_cars)
->>>>>>> e187ba9aa4313e9a1a21e156dd8ce8c3d6eaff1a
-	#environment.automatic_simulation()
+	environment.automatic_simulation()
+
 
