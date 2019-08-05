@@ -65,7 +65,7 @@ def plot_from_networkx(nodes, edges):
             hoch = x.weight
         elif tief > x.weight:
             tief = x.weight
-            
+                        
     print("hoch:",hoch,"\ntief:",tief)
     hoch = hoch - tief
     
