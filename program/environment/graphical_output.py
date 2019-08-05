@@ -66,20 +66,17 @@ def plot_from_networkx(nodes, edges):
         elif tief > x.weight:
             tief = x.weight
             
-    print("hoch:",hoch,"\ntief:",tief)
     hoch = hoch - tief
     
     for x in edges:
         percent = 1 / (hoch / (x.weight-tief))
-        print(percent)
         color_red = int(255 * percent)
         color.append(convert_to_hex(color_red))
-    print(color)
 
     nodemap = {}
 
     for i,node in enumerate(nodes):
         nodemap[i] = node.position
     
-    nx.draw(G, nodemap, with_labels=True,edge_color=color,)
+    nx.draw(G, nodemap, with_labels=True,edge_color=color)
     plt.show()
