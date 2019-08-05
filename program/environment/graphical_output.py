@@ -1,6 +1,13 @@
 
 #import plotly.graph_objects as go
 
+color = []
+
+def convert_to_hex(color_red):
+
+    color_green = 255-color_red
+    color_blue = 0
+    return '#%02x%02x%02x' % (color_red, color_green, color_blue)
 
 def plot_static_plotly(all_edges_x, all_edges_y, all_nodes_x, all_nodes_y, vertexes, edges):
     edge_trace = go.Scatter(
@@ -18,27 +25,8 @@ def plot_static_plotly(all_edges_x, all_edges_y, all_nodes_x, all_nodes_y, verte
     marker=dict(
         color="green"
     ))
-#Finde das kleinste und größte Gewicht
-    hoch = edges[0].weight
-    tief = edges[0].weight
-    for x in edges:
-        if hoch < x.weight:
-            hoch = x.weight
-        elif tief > x.weight:
-            tief = x.weight
-    hoch = hoch - tief
-    
-    for x in edges:
-        percent = 1 / (hoch / (x.weight-tief))
-        print(percent)
-        color_red = 255 * percent
-        color_green = 255-color_red
-        #### FERTIG MACHEN
 
-        
-        
 
-    print("hoch:",hoch,"\ntief:",tief)
 
     fig = go.Figure(data=[edge_trace, node_trace],
         layout=go.Layout(
@@ -67,5 +55,26 @@ def convert_to_networkx(nodes, edges):
 import matplotlib.pyplot as plt
 def plot_from_networkx(nodes, edges):
     G = convert_to_networkx(nodes, edges)
-    nx.draw(G, with_labels=True)
+
+    
+    #Finde das kleinste und größte Gewicht
+    hoch = edges[0].weight
+    tief = edges[0].weight
+    for x in edges:
+        if hoch < x.weight:
+            hoch = x.weight
+        elif tief > x.weight:
+            tief = x.weight
+            
+    print("hoch:",hoch,"\ntief:",tief)
+    hoch = hoch - tief
+    
+    for x in edges:
+        percent = 1 / (hoch / (x.weight-tief))
+        print(percent)
+        color_red = int(255 * percent)
+        color.append(convert_to_hex(color_red))
+    print(color)
+    
+    nx.draw(G, with_labels=True,edge_color=color)
     plt.show()
