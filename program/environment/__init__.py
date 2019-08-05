@@ -114,7 +114,7 @@ def manual_simulation(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATI
 		if cycle % GRAPHICAL_UPDATE_PERIOD == 0:
 			#print(f"Now reached cycle {cycle}. Number of cars simulated: {number_cars_generated}")
 			if SHOW_GRAPHICAL_SIMULATION:
-				pass #hier soll dann die Graphische Ausgabe geupdated werden
+				plot_with_networkx() #hier soll dann die Graphische Ausgabe geupdated werden
 
 
 #Simuliert Netzwerkströme automatisch
@@ -144,7 +144,7 @@ def automatic_simulation(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_G
 		if cycle % GRAPHICAL_UPDATE_PERIOD == 0:
 			print(f"Now reached cycle {cycle}. Number of cars simulated: {number_cars_generated}")
 			if SHOW_GRAPHICAL_SIMULATION:
-				pass #hier soll dann die Graphische Ausgabe geupdated werden
+				plot_with_networkx()
 
 #plottet das Netzwerk zu einem gewissen Zeitpunkt
 def static_network_plot():

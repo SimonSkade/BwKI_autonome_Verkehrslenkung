@@ -1,7 +1,7 @@
 
 #import plotly.graph_objects as go
 
-color = []
+
 
 def convert_to_hex(color_red):
 
@@ -56,7 +56,7 @@ import matplotlib.pyplot as plt
 def plot_from_networkx(nodes, edges):
     G = convert_to_networkx(nodes, edges)
 
-    
+    color = []
     #Finde das kleinste und größte Gewicht
     hoch = edges[0].weight
     tief = edges[0].weight
@@ -77,6 +77,5 @@ def plot_from_networkx(nodes, edges):
 
     for i,node in enumerate(nodes):
         nodemap[i] = node.position
-    
-    nx.draw(G, nodemap, with_labels=True,edge_color=color)
+    nx.draw(G, pos=nodemap, with_labels=True,edge_color=color)
     plt.show()
