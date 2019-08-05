@@ -67,5 +67,5 @@ def convert_to_networkx(nodes, edges):
 import matplotlib.pyplot as plt
 def plot_from_networkx(nodes, edges):
     G = convert_to_networkx(nodes, edges)
-    nx.draw(G)
+    nx.draw(G, with_labels=True)
     plt.show()
