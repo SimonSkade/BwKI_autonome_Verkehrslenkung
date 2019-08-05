@@ -75,6 +75,11 @@ def plot_from_networkx(nodes, edges):
         color_red = int(255 * percent)
         color.append(convert_to_hex(color_red))
     print(color)
+
+    nodemap = {}
+
+    for i,node in enumerate(nodes):
+        nodemap[i] = node.position
     
-    nx.draw(G, with_labels=True,edge_color=color)
+    nx.draw(G, nodemap, with_labels=True,edge_color=color,)
     plt.show()
