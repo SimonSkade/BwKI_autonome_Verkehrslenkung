@@ -17,6 +17,7 @@ class Car: #Objekte von Car stellen Autos dar
 		self.future_edge_IDs = self.future_edge_ids[1:]
 
 	def djikstra(self, start_node_ID, end_node_ID): #berechnet den schnellsten Pfad und speichert die zukünftig abgefahrenen Kanten
+		num_nodes = len(vertexes)
 		actual_node_ID = start_node_ID
 		actual_node_value = 0
 		predecessor = np.zeros((num_nodes), dtype='int32')

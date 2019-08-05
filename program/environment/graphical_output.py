@@ -1,12 +1,13 @@
 
-import plotly.graph_objects as go
+#import plotly.graph_objects as go
 
 
-def plot_static(all_edges_x, all_edges_y, all_nodes_x, all_nodes_y, vertexes, edges):
+def plot_static_plotly(all_edges_x, all_edges_y, all_nodes_x, all_nodes_y, vertexes, edges):
     edge_trace = go.Scatter(
     x=all_edges_x, y=all_edges_y,
     line=dict(width=0.5, color='#888', shape="spline"),
-    hoverinfo='none',
+    hovertext=["Gewicht: " + str(x.weight) for x in edges],
+    hoverinfo='text',
     mode='lines')
 
     node_trace = go.Scatter(
@@ -55,4 +56,16 @@ def plot_static(all_edges_x, all_edges_y, all_nodes_x, all_nodes_y, vertexes, ed
             yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
             )
     fig.show()
-        
+
+import networkx as nx
+def convert_to_networkx(nodes, edges):
+    G = nx.DiGraph()
+    G.add_weighted_edges_from([(x.v1_id,x.v2_id,x.weight) for x in edges])
+
+    return G
+
+import matplotlib.pyplot as plt
+def plot_from_networkx(nodes, edges):
+    G = convert_to_networkx(nodes, edges)
+    nx.draw(G)
+    plt.show()
