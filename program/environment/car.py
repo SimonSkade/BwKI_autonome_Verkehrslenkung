@@ -9,12 +9,12 @@ class Car: #Objekte von Car stellen Autos dar
 		self.ID = ID
 		self.start_node_ID = start_node_ID
 		self.end_node_IDs = end_node_IDs #Ist eine Liste!, auch wenn es meistens nur ein Element enthält
-		self.future_edge_ids = []
+		self.edge_ids = []
 		for i in range(len(self.end_node_IDs) - 1, 0, -1): #Pfade von Zwischenknoten zum Endknoten berechnen
 			self.djikstra(self.end_node_IDs[i-1], self.end_node_IDs[i])
 		self.djikstra(self.start_node_ID, self.end_node_IDs[0])# Pfad von Startknoten zum (ersten) Emdknoten berechnen
-		self.actual_edge = self.future_edge_ids[0]
-		self.future_edge_IDs = self.future_edge_ids[1:]
+		self.actual_edge = self.edge_ids[0]
+		self.future_edge_IDs = self.edge_ids[1:]
 
 	def djikstra(self, start_node_ID, end_node_ID): #berechnet den schnellsten Pfad und speichert die zukünftig abgefahrenen Kanten
 		num_nodes = len(vertexes)
@@ -49,7 +49,7 @@ class Car: #Objekte von Car stellen Autos dar
 		future_edges = []
 		while actual_node_ID != start_node_ID:
 			node_before = vertexes[predecessor[actual_node_ID]]
-			self.future_edge_ids.insert(0, node_before.edgesIDs[actual_node_ID])
+			self.edge_ids.insert(0, node_before.edgesIDs[actual_node_ID])
 			actual_node_ID = node_before.ID
 
 

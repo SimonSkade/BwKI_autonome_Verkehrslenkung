@@ -2,33 +2,23 @@ import numpy as np
 
 MAX_CYCLES = 100000
 SHOW_GRAPHICAL_SIMULATION = True
-GRAPHICAL_UPDATE_PERIOD = 100
+UPDATE_PERIOD = 100
 AUTO_GENERATE_RATE = 0.1
 
 cars = {}
 number_cars_generated = 0
 action_plan = []
 
-def binary_search(sorted_array, element):#findet den Index eines Elements in einem sortierten array
-	l = 0
-	r = len(sorted_array) - 1
-	if sorted_array == []:
-		return 0
-	if element > sorted_array[-1]:
-		return r + 1
-	while r - l >= 0:
-		m = l + (r-l) // 2
-		if sorted_array[m] == element:
-			return m
-		elif element < sorted_array[m]:
-			r = m - 1
-		else:
-			l = m + 1
-	return m 
 
-def binary_search_action_plan(new_cycle_nr):#binary_search für Aktionen
+def linear_search(sorted_array, element):
+	for i, value in enumerate(sorted_array):
+		if element < value:
+			return i
+	return len(sorted_array)
+
+def linear_search_action_plan(new_cycle_nr):#linear_search für Aktionen
 	sorted_array = [x.cycle_nr for x in action_plan]
-	return binary_search(sorted_array, new_cycle_nr)	
+	return linear_search(sorted_array, new_cycle_nr)	
 
 class Action:#Stellt einen Kantenwechsel eines Autos zu einer bestimmten Zeit dar
 	def __init__(self, actual_cycle, car_ID):
@@ -46,13 +36,12 @@ class Action:#Stellt einen Kantenwechsel eines Autos zu einer bestimmten Zeit da
 			net.network.add_car(self.edge_ID)
 			#Erstelle eine neue Aktion für den nächsten Kantenwechsel
 			new_action = Action(actual_cycle, self.car_ID)
-			index = binary_search_action_plan(new_action.cycle_nr)
+			index = linear_search_action_plan(new_action.cycle_nr)
 			action_plan.insert(index, new_action)
 
 		else:#Das Auto hat sein Ziel erreicht
 			net.network.remove_car(self.edge_ID)
 			del cars[self.car_ID] #Lösche das Auto
-
 
 def initialize_network(file): #Liest die benötigten Daten aus einer Datei ein und gibt diese weiter zur Netzwerk-Initialisierung
 	from . import net
@@ -74,8 +63,9 @@ def initialize_network(file): #Liest die benötigten Daten aus einer Datei ein u
 	net.initialize_network(positions, data_a, data_b)
 
 #Simuliert die Verkehrsströme wie in einem input file vorgegeben
-def manual_simulation(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_GRAPHICAL_SIMULATION, GRAPHICAL_UPDATE_PERIOD=GRAPHICAL_UPDATE_PERIOD):
+def manual_simulation(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_GRAPHICAL_SIMULATION, UPDATE_PERIOD=UPDATE_PERIOD):
 	from . import car
+	from . import net
 	def extract_data_from_file(input_file):
 		cycle_numbers, start_node_ids, end_node_ids = [], [], []
 		with open(input_file, "r") as f:
@@ -84,7 +74,7 @@ def manual_simulation(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATI
 			for line in lines:
 				columns = line.split(" ")
 				cycle_nr = int(columns[0])
-				index = binary_search(cycle_numbers, cycle_nr)
+				index = linear_search(cycle_numbers, cycle_nr)
 				cycle_numbers.insert(index, cycle_nr)
 				start_node_ids.insert(index, int(columns[1]))
 				end_nodes = columns[2].split(",")
@@ -100,7 +90,7 @@ def manual_simulation(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATI
 				cars[number_cars_generated] = new_car
 				#Aktion generieren
 				new_action = Action(cycle, number_cars_generated)
-				index = binary_search_action_plan(new_action.cycle_nr)
+				index = linear_search_action_plan(new_action.cycle_nr)
 				action_plan.insert(index, new_action)
 				number_cars_generated += 1
 				del cycle_numbers[0]
@@ -111,14 +101,22 @@ def manual_simulation(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATI
 				del action_plan[0]
 		except IndexError:
 			pass
-		if cycle % GRAPHICAL_UPDATE_PERIOD == 0:
-			#print(f"Now reached cycle {cycle}. Number of cars simulated: {number_cars_generated}")
+		if cycle % UPDATE_PERIOD == 0:
+			print(f"Now reached cycle {cycle}. Number of cars simulated: {number_cars_generated}")
+			flow_rate = np.sum([x.n_cars / x.weight for x in net.network.edges])
+			avg_flow_rate = flow_rate/len(cars)
+			#avg_actual_time_per_edge = 1 / flow_rate # sollte proportional zu folgendem sein: np.sum([net.network.edges[x.actual_edge] for x in cars])
+			avg_total_time_per_edge = np.sum([np.sum([net.network.edges[x.future_edge_IDs[y]].weight for y in range(len(x.future_edge_IDs))]) + net.network.edges[x.actual_edge].weight for x in cars.values()]) / np.sum([len(x.future_edge_IDs) + 1 for x in cars.values()])
+			avg_total_time_per_car = np.sum([np.sum([net.network.edges[x.future_edge_IDs[y]].weight for y in range(len(x.future_edge_IDs))]) + net.network.edges[x.actual_edge].weight for x in cars.values()]) / len(cars)
+			print(f"Absolute Flow rate: {flow_rate};\nDurchschnittliche Flow Rate: {avg_flow_rate};\nDurchschnittliche Zeit pro befahrene Kante: {avg_total_time_per_edge};")
+			print(f"Durchschnittliche Gesamtfahrzeit pro Auto: {avg_total_time_per_car};\nAnzahl Autos gesamt: {len(cars)}")
+
 			if SHOW_GRAPHICAL_SIMULATION:
 				plot_with_networkx() #hier soll dann die Graphische Ausgabe geupdated werden
 
 
 #Simuliert Netzwerkströme automatisch
-def automatic_simulation(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_GRAPHICAL_SIMULATION, GRAPHICAL_UPDATE_PERIOD=GRAPHICAL_UPDATE_PERIOD, AUTO_GENERATE_RATE=AUTO_GENERATE_RATE):
+def automatic_simulation(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_GRAPHICAL_SIMULATION, UPDATE_PERIOD=UPDATE_PERIOD, AUTO_GENERATE_RATE=AUTO_GENERATE_RATE):
 	from . import car
 	number_cars_generated = 0
 	for cycle in range(MAX_CYCLES):
@@ -132,7 +130,7 @@ def automatic_simulation(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_G
 			cars[number_cars_generated] = new_car
 			#Aktion generieren
 			new_action = Action(cycle, number_cars_generated)
-			index = binary_search_action_plan(new_action.cycle_nr)
+			index = linear_search_action_plan(new_action.cycle_nr)
 			action_plan.insert(index, new_action)
 			number_cars_generated += 1
 		try:
@@ -141,8 +139,15 @@ def automatic_simulation(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_G
 				del action_plan[0]
 		except IndexError:
 			pass
-		if cycle % GRAPHICAL_UPDATE_PERIOD == 0:
+		if cycle % UPDATE_PERIOD == 0:
 			print(f"Now reached cycle {cycle}. Number of cars simulated: {number_cars_generated}")
+			flow_rate = np.sum([x.n_cars / x.weight for x in net.network.edges])
+			avg_flow_rate = flow_rate/len(cars)
+			#avg_actual_time_per_edge = 1 / flow_rate # sollte proportional zu folgendem sein: np.sum([net.network.edges[x.actual_edge] for x in cars])
+			avg_total_time_per_edge = np.sum([np.sum([net.network.edges[x.future_edge_IDs[y]].weight for y in range(len(x.future_edge_IDs))]) + net.network.edges[x.actual_edge].weight for x in cars.values()]) / np.sum([len(x.future_edge_IDs) + 1 for x in cars.values()])
+			avg_total_time_per_car = np.sum([np.sum([net.network.edges[x.future_edge_IDs[y]].weight for y in range(len(x.future_edge_IDs))]) + net.network.edges[x.actual_edge].weight for x in cars.values()]) / len(cars)
+			print(f"Absolute Flow rate: {flow_rate};\nDurchschnittliche Flow Rate: {avg_flow_rate};\nDurchschnittliche Zeit pro befahrene Kante: {avg_total_time_per_edge};")
+			print(f"Durchschnittliche Gesamtfahrzeit pro Auto: {avg_total_time_per_car};\nAnzahl Autos gesamt: {len(cars)}")
 			if SHOW_GRAPHICAL_SIMULATION:
 				plot_with_networkx()
 
