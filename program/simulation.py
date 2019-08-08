@@ -9,5 +9,6 @@ def generate_nodepositions_per_center(n_nodes): #generiert für jedes Zentrum di
 	center_position_y = np.random.randint(low=0, high=50)
 	for i in range(n_nodes):
 		node_positions_x[i] = np.rand.normal(loc=center_position_x, scale=5)
-		node_positions_y[i] = np.rand.normal(loc=center_position_y, scale=5)
+		node_positions_y[i] = np.rand.normal(loc=center_position_y, scale=5) #möglicherweise Knoten außerhalb des Koordinatensystems, müssen zu Randknoten mit hoher Autoausgabe werden
+
 
