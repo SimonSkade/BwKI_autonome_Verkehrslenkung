@@ -1,6 +1,10 @@
 
 import numpy as np
 
+def sigm(x):
+	return 1/(1+np.exp(-x))
+
+
 class Vertex: #Stellt die Knoten im Netzwerk dar
 	def __init__(self, ID, position, connections):
 		self.ID = ID #Einfach eine sequenzielle Zahl; Der Index im Array network.vertexes
@@ -12,19 +16,21 @@ class Vertex: #Stellt die Knoten im Netzwerk dar
 		self.edgesIDs[v2_id] = edgeID
 
 class Edge: #Stellt die Kanten im Netzwerk dar
-	def __init__(self, ID, v1_id, v2_id, a, b, n_cars=0):
+	def __init__(self, ID, v1_id, v2_id, a, b, c, d, n_cars=0):
 		self.ID = ID
 		self.v1_id = v1_id #Startknoten
 		self.v2_id = v2_id #Endknoten
 		#Konstante Gewichtsparameter
 		self.a = a
 		self.b = b
+		self.c = c
+		self.d = d
 		#Anzahl der Autos auf der Kante
 		self.n_cars = n_cars
 		self.calc_weight()
 
 	def calc_weight(self): #später weiter präzisieren
-		self.weight = round(self.a * self.n_cars + self.b)
+		self.weight = round(a*sigm(n_cars-b) + c*n_cars**2 + d)
 
 	def calc_dist(self, P1, P2): #Die Länge im Koordinatensystem #vielleicht nützlich für die automatische Generierung später
 		return np.sqrt(np.sum(np.sq(P1[0] - P2[0]), np.sq(P1[1] - P2[1])))

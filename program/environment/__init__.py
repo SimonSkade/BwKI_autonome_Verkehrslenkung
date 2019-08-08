@@ -71,7 +71,9 @@ def initialize_network(file): #Liest die benötigten Daten aus einer Datei ein u
 		positions = read_matrix(data[0])
 		data_a = read_matrix(data[1])
 		data_b = read_matrix(data[2])
-	net.initialize_network(positions, data_a, data_b)
+		data_c = read_matrix(data[3])
+		data_d = read_matrix(data[4])
+	net.initialize_network(positions, data_a, data_b, data_c, data_d)
 
 #Simuliert die Verkehrsströme wie in einem input file vorgegeben
 def manual_simulation(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_GRAPHICAL_SIMULATION, GRAPHICAL_UPDATE_PERIOD=GRAPHICAL_UPDATE_PERIOD):

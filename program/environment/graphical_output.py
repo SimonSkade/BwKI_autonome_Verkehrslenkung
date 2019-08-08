@@ -79,3 +79,6 @@ def plot_from_networkx(nodes, edges):
         nodemap[i] = node.position
     nx.draw(G, pos=nodemap, with_labels=True,edge_color=color)
     plt.show()
+    
+
+
