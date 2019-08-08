@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 #In dieser Datei sollen verschiedene Funktionen geschrieben werden, die eine realistische und praktische Simulation ermöglichen
 
+#Mehrere Zentren wären gut
 def generate_nodepositions_per_center(n_nodes): #generiert für jedes Zentrum die Positionen für die Knoten, Anzahl vorgegeben, Normalverteilung um Zentrum, Ränder automatisch generiert
 	space_size = 1000
 	scale_radius = space_size / 20
@@ -31,7 +32,7 @@ def generate_nodepositions_per_center(n_nodes): #generiert für jedes Zentrum di
 	return node_positions #np.column_stack((node_positions_x, node_positions_y)) #gibt zweidimensionales Array zurück, eine Zeile alle x eine für alle y Koordinaten
 
 
-node_positions = generate_nodepositions_per_center(40) #Testen (dann muss nur simulation.py aufgerufen werden)
+node_positions = generate_nodepositions_per_center(500) #Testen (dann muss nur simulation.py aufgerufen werden)
 #Funktionierte nicht --> bitte besser testen
 
 def calc_dist(P1, P2): #Die Länge im Koordinatensystem #vielleicht nützlich für die automatische Generierung später
@@ -53,16 +54,16 @@ def generate_edges_without_weights(node_coordinates): #Vielleicht weights am End
 		incoming = True #muss nicht stimmen, aber wird am Ende der Schleife korrigiert
 		#Wenn die schleife nicht ausgeführt wird, stimmt es auf jeden Fall
 		nodes_sorted = np.argsort(distance_matrix[i])
-		nodes_sorted = nodes_sorted[1:]
+		nodes_sorted = nodes_sorted[1:] #Die Kante selbst aus dem Knoten löschen
 		while num_existing_edges < num_edges or not incoming:
 			distance_index = int(np.round(np.random.rand()**3 * (num_nodes-1)))
 			second_node = nodes_sorted[distance_index]
-			if i != second_node: #Darf nicht die gleiche Kante sein
-				binary_edge_matrix[i, second_node] = 1
-				num_existing_edges += 1
-				is_one_way = np.random.rand()
-				if is_one_way < 0.95:
-					binary_edge_matrix[second_node, i] = 1
+			binary_edge_matrix[i, second_node] = 1
+			num_existing_edges += 1
+			is_one_way = np.random.rand()
+			if is_one_way < 0.95:
+				binary_edge_matrix[second_node, i] = 1
+			incoming = False if np.sum(binary_edge_matrix[:, i]) == 0 else True
 	return binary_edge_matrix
 
 
