@@ -11,4 +11,7 @@ if __name__=='__main__': #kann man das auch noch anders kontrollieren, dass ein 
 	#environment.manual_simulation(input_file_cars) #Autos manuell einlesen
 	environment.automatic_simulation() #automatische Simulierung starten
 
+	import simulation as sm
+	#Hier können mit sm.function() dann die Simulationen ausgeführt werden
+
 
