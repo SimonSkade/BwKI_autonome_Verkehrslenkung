@@ -30,14 +30,14 @@ class Edge: #Stellt die Kanten im Netzwerk dar
 		self.calc_weight()
 
 	def calc_weight(self): #später weiter präzisieren
-		self.weight = round(a*sigm(n_cars-b) + c*n_cars**2 + d)
+		self.weight = round(self.a*sigm(self.n_cars-self.b) + self.c*self.n_cars**2 + self.d)
 
 	def calc_dist(self, P1, P2): #Die Länge im Koordinatensystem #vielleicht nützlich für die automatische Generierung später
 		return np.sqrt(np.sum(np.sq(P1[0] - P2[0]), np.sq(P1[1] - P2[1])))
 
 class Net:#Stellt das Netzwerk dar
-	def __init__(self, positions, data_a, data_b): #Initiert das Netzwerk #Eingabe als mehrere konstante Matrizen
-		self.fixed_params = [positions, data_a, data_b] #vermutlich nicht nötig
+	def __init__(self, positions, data_a, data_b, data_c, data_d): #Initiert das Netzwerk #Eingabe als mehrere konstante Matrizen
+		self.fixed_params = [positions, data_a, data_b, data_c, data_d] #vermutlich nicht nötig
 		n_vertexes = np.shape(positions)[0]
 		self.vertexes = [] #Liste der Knoten
 		for i in range(n_vertexes):
@@ -51,7 +51,7 @@ class Net:#Stellt das Netzwerk dar
 		for i in range(n_vertexes):
 			for j in range(n_vertexes):
 				if data_a[i, j] != 0:
-					self.edges.append(Edge(edge_nr, i, j, data_a[i, j], data_b[i, j]))
+					self.edges.append(Edge(edge_nr, i, j, data_a[i, j], data_b[i, j], data_c[i, j], data_d[i, j]))
 					self.vertexes[i].add_edgeID(j, edge_nr)
 					edge_nr += 1
 		self.graph_matrix = np.zeros((n_vertexes, n_vertexes)) #Variable Matrix
@@ -73,7 +73,7 @@ class Net:#Stellt das Netzwerk dar
 		self.graph_matrix[edge.v1_id, edge.v2_id] = edge.weight
 
 
-def initialize_network(positions, data_a, data_b):#initiert das Netzwerk
+def initialize_network(positions, data_a, data_b, data_c, data_d):#initiert das Netzwerk
 	global network
-	network = Net(positions, data_a, data_b)
+	network = Net(positions, data_a, data_b, data_c, data_d)
 
