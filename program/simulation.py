@@ -5,35 +5,57 @@ import matplotlib.pyplot as plt
 
 #Mehrere Zentren wären gut
 def generate_nodepositions_per_center(n_nodes): #generiert für jedes Zentrum die Positionen für die Knoten, Anzahl vorgegeben, Normalverteilung um Zentrum, Ränder automatisch generiert
-	space_size = 1000
-	scale_radius = space_size / 20
-	node_positions_x = np.zeros(n_nodes, dtype=np.intc) #Arbeitsweise: x- und y-Werte werden getrennt dargestellt
-	node_positions_y = np.zeros(n_nodes, dtype=np.intc) #Wenn das Zentrum sehr nah am Rand liegt, kommt es zu Problemen
-	center_position_x = np.random.randint(low=0, high=space_size)
-	center_position_y = np.random.randint(low=0, high=space_size)
-	node_positions = []
-	for i in range(n_nodes):
-		node_positions_x[i] = np.round(np.random.normal(loc=center_position_x, scale=scale_radius)) #möglicherweise Knoten außerhalb des Koordinatensystems, deswegen Z. 12-15
-		if node_positions_x[i] < 0:
-			node_positions_x[i] = 0
-		elif node_positions_x[i] > space_size:
-			node_positions_x[i] = space_size
-		node_positions_y[i] = np.round(np.random.normal(loc=center_position_y, scale=scale_radius)) #dasselbe für y-Werte
-		if node_positions_y[i] < 0:
-			node_positions_y[i] = 0
-		elif node_positions_y[i] > space_size:
-			node_positions_y[i] = space_size
-		node_positions.append((int(node_positions_x[i]), int(node_positions_y[i])))
-	fig = plt.figure()
-	plt.scatter(node_positions_x, node_positions_y) #aus Interesse plotten
-	plt.scatter(center_position_x, center_position_y, color='red')
-	plt.show()
-	#Ich habe die Rückgabe geändert zu einer Liste von Knoten mit den Koordinaten
-	return node_positions #np.column_stack((node_positions_x, node_positions_y)) #gibt zweidimensionales Array zurück, eine Zeile alle x eine für alle y Koordinaten
+    space_size = 1000
+    scale_radius = space_size / 20
+    node_positions = []
+    node_positions_x = np.zeros(n_nodes, dtype=np.intc) #Arbeitsweise: x- und y-Werte werden getrennt dargestellt
+    node_positions_y = np.zeros(n_nodes, dtype=np.intc) #Wenn das Zentrum sehr nah am Rand liegt, kommt es zu Problemen
+    center_position_x = np.random.randint(low=1.5*scale_radius, high=space_size-1.5*scale_radius)
+    center_position_y = np.random.randint(low=1.5*scale_radius, high=space_size-1.5*scale_radius)
+    for i in range(n_nodes):
+        node_positions_x[i] = np.round(np.random.normal(loc=center_position_x, scale=scale_radius)) #möglicherweise Knoten außerhalb des Koordinatensystems, deswegen Z. 12-15
+        if node_positions_x[i] < 0:
+            node_positions_x[i] = 0
+        elif node_positions_x[i] > space_size:
+            node_positions_x[i] = space_size
+        node_positions_y[i] = np.round(np.random.normal(loc=center_position_y, scale=scale_radius)) #dasselbe für y-Werte
+        if node_positions_y[i] < 0:
+            node_positions_y[i] = 0
+        elif node_positions_y[i] > space_size:
+            node_positions_y[i] = space_size
+        node_positions.append((int(node_positions_x[i]), int(node_positions_y[i])))
+    fig = plt.figure()
+    plt.scatter(node_positions_x, node_positions_y) #aus Interesse plotten
+    plt.scatter(center_position_x, center_position_y, color='red')
+    plt.show()
+    #Ich habe die Rückgabe geändert zu einer Liste von Knoten mit den Koordinaten
+    return node_positions
 
+def generate_border_nodes(n_border_nodes):
+    space_size = 1000
+    node_positions = []
+    node_positions_x = np.random.random_integers(low=0, high=1, size=n_border_nodes) 
+    node_positions_y = np.random.random_integers(low=0, high=1, size=n_border_nodes) 
+    for i in range(n_border_nodes):
+        if node_positions_x[i] == 1:
+            node_positions_x[i] = np.random.randint(low=0, high=1)*space_size
+            node_positions_y[i] = np.random.randint(low=0, high=space_size)
+        else:
+            node_positions_y[i] = np.random.randint(low=0, high=1)*space_size
+            node_positions_x[i] = np.random.randint(low=0, high=space_size)
+        node_positions.append((int(node_positions_x[i]), int(node_positions_y[i])))
+    fig = plt.figure()
+    plt.scatter(node_positions_x, node_positions_y) #aus Interesse plotten
+    plt.show()
+    return node_positions
 
-node_positions = generate_nodepositions_per_center(500) #Testen (dann muss nur simulation.py aufgerufen werden)
-#Funktionierte nicht --> bitte besser testen
+n_border_nodes = 5
+n_centers = 5
+n_nodes = 100
+for x in range(n_centers):
+    node_positions = generate_nodepositions_per_center(int(np.random.normal(loc=n_nodes/n_centers, scale=15))) #Testen (dann muss nur simulation.py aufgerufen werden)
+generate_border_nodes(n_border_nodes)
+    #Funktionierte nicht --> bitte besser testen
 
 def calc_dist(P1, P2): #Die Länge im Koordinatensystem #vielleicht nützlich für die automatische Generierung später
 	return np.sqrt((P1[0] - P2[0])**2 + (P1[1] - P2[1])**2)
