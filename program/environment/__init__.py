@@ -3,7 +3,7 @@ import numpy as np
 MAX_CYCLES = 100000
 SHOW_GRAPHICAL_SIMULATION = True
 UPDATE_PERIOD = 100
-AUTO_GENERATE_RATE = 0.1
+AUTO_GENERATE_RATE = 0.7
 
 cars = {}
 number_cars_generated = 0
@@ -122,7 +122,7 @@ def automatic_simulation(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_G
 	from . import car
 	number_cars_generated = 0
 	for cycle in range(MAX_CYCLES):
-		if np.random.rand() < AUTO_GENERATE_RATE:
+		while np.random.rand() < AUTO_GENERATE_RATE:
 			start_node_id, end_node_id = None, None
 			while start_node_id == end_node_id:
 				start_node_id = np.random.choice([x for x in range(len(net.network.vertexes))])
