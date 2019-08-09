@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
-
+from environment import net
 #In dieser Datei sollen verschiedene Funktionen geschrieben werden, die eine realistische und praktische Simulation ermöglichen
 
 #Mehrere Zentren wären gut
@@ -130,8 +130,13 @@ def generate_weights_of_edges(binary_edge_matrix, distance_matrix):
 				d_matrix[i, j] = np.sqrt(abs(np.random.normal(loc=k, scale=k/5)) * distance_matrix[i, j]) + abs(np.random.normal(loc=g, scale=g/5)) * distance_matrix[i, j]
 	return a_matrix, b_matrix, c_matrix, d_matrix
 
+def generate_network(n_nodes, n_centers=2):
+	node_positions = generate_nodes(n_nodes, n_centers)
+	binary_edge_matrix, distance_matrix = generate_edges_without_weights(node_positions)
+	#plot_edges(node_positions, binary_edge_matrix)
+	a_matrix, b_matrix, c_matrix, d_matrix = generate_weights_of_edges(binary_edge_matrix, distance_matrix)
+	net.initialize_network(node_positions, a_matrix, b_matrix, c_matrix, d_matrix)
 
-node_positions = generate_nodes(100, 2)
-binary_edge_matrix, distance_matrix = generate_edges_without_weights(node_positions)
-#plot_edges(node_positions, binary_edge_matrix)
-a_matrix, b_matrix, c_matrix, d_matrix = generate_weights_of_edges(binary_edge_matrix, distance_matrix)
+
+
+	
