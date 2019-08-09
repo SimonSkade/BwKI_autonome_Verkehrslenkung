@@ -131,12 +131,38 @@ def generate_weights_of_edges(binary_edge_matrix, distance_matrix):
 	return a_matrix, b_matrix, c_matrix, d_matrix
 
 def generate_network(n_nodes, n_centers=2):
+	global node_positions, a_matrix, b_matrix, c_matrix, d_matrix
 	node_positions = generate_nodes(n_nodes, n_centers)
 	binary_edge_matrix, distance_matrix = generate_edges_without_weights(node_positions)
 	#plot_edges(node_positions, binary_edge_matrix)
 	a_matrix, b_matrix, c_matrix, d_matrix = generate_weights_of_edges(binary_edge_matrix, distance_matrix)
 	net.initialize_network(node_positions, a_matrix, b_matrix, c_matrix, d_matrix)
 
-
-
+def save_network(filename):
+	global node_positions, a_matrix, b_matrix, c_matrix, d_matrix
+	with open(filename, "w") as file:
+		for position in node_positions:
+			file.write(str(position[0]) + " " + str(position[1]) + "\n")
+		file.write("\n")
+		for i in range(len(node_positions)):
+			for j in range(len(node_positions)-1):
+				file.write(str(a_matrix[i,j]) + " ")
+			file.write(str(a_matrix[i,-1]) + "\n")
+		file.write("\n")
+		for i in range(len(node_positions)):
+			for j in range(len(node_positions)-1):
+				file.write(str(a_matrix[i,j]) + " ")
+			file.write(str(b_matrix[i,-1]) + "\n")
+		file.write("\n")
+		for i in range(len(node_positions)):
+			for j in range(len(node_positions)-1):
+				file.write(str(a_matrix[i,j]) + " ")
+			file.write(str(c_matrix[i,-1]) + "\n")
+		file.write("\n")
+		for i in range(len(node_positions)):
+			for j in range(len(node_positions)-1):
+				file.write(str(a_matrix[i,j]) + " ")
+			file.write(str(d_matrix[i,-1]) + "\n")
+		file.write("\n")
+		file.close()
 	
