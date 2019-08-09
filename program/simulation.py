@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 #In dieser Datei sollen verschiedene Funktionen geschrieben werden, die eine realistische und praktische Simulation ermöglichen
 
 #Mehrere Zentren wären gut
-def generate_nodepositions_per_center(n_nodes): #generiert für jedes Zentrum die Positionen für die Knoten, Anzahl vorgegeben, Normalverteilung um Zentrum, Ränder automatisch generiert
-    space_size = 1000
-    scale_radius = space_size / 20
+def generate_nodepositions_per_center(n_nodes, space_size): #generiert für jedes Zentrum die Positionen für die Knoten, Anzahl vorgegeben, Normalverteilung um Zentrum, Ränder automatisch generiert
+    space_size = space_size
+    scale_radius = space_size / 10
     node_positions = []
     node_positions_x = np.zeros(n_nodes, dtype=np.intc) #Arbeitsweise: x- und y-Werte werden getrennt dargestellt
     node_positions_y = np.zeros(n_nodes, dtype=np.intc) #Wenn das Zentrum sehr nah am Rand liegt, kommt es zu Problemen
@@ -29,8 +29,20 @@ def generate_nodepositions_per_center(n_nodes): #generiert für jedes Zentrum di
     #Ich habe die Rückgabe geändert zu einer Liste von Knoten mit den Koordinaten
     return node_positions
 
-def generate_border_nodes(n_border_nodes):
-    space_size = 1000
+def generate_random_nodes(n_nodes, space_size):
+	scale_radius = space_size / 10
+	node_positions_x = []
+	node_positions_y = []
+	random_nodes = []
+	for i in range(n_nodes):
+		node_positions_x.append(np.random.randint(low=0.5*scale_radius, high=space_size-0.5*scale_radius))
+		node_positions_y.append(np.random.randint(low=0.5*scale_radius, high=space_size-0.5*scale_radius))
+		random_nodes.append((node_positions_x[i], node_positions_y[i]))
+	plt.scatter(node_positions_x, node_positions_y)
+	return random_nodes
+
+def generate_border_nodes(n_border_nodes, space_size):
+    space_size = space_size
     node_positions = []
     node_positions_x = np.random.random_integers(low=0, high=1, size=n_border_nodes) 
     node_positions_y = np.random.random_integers(low=0, high=1, size=n_border_nodes) 
@@ -45,13 +57,21 @@ def generate_border_nodes(n_border_nodes):
     plt.scatter(node_positions_x, node_positions_y) #aus Interesse plotten
     return node_positions
 
-n_border_nodes = 100
-n_centers = 4
-n_nodes = 1000
-for x in range(n_centers):
-    node_positions = generate_nodepositions_per_center(abs(int(np.random.normal(loc=n_nodes/n_centers, scale=15)))) #Testen (dann muss nur simulation.py aufgerufen werden)
-generate_border_nodes(n_border_nodes)
-plt.show()
+def generate_nodes(n_nodes, n_centers=4, space_size=1000):
+	n_border_nodes = int(n_nodes * 0.07)
+	n_centers = n_centers
+	n_nodes_around_centers = int(n_nodes * 0.8)
+	n_spread_nodes = int(n_nodes * 0.13)
+	space_size = space_size
+	for x in range(n_centers):
+	    node_positions1 = generate_nodepositions_per_center(abs(int(np.random.normal(loc=n_nodes/n_centers, scale=15))), space_size) #Testen (dann muss nur simulation.py aufgerufen werden)
+	node_positions2 = generate_random_nodes(n_spread_nodes, space_size)
+	node_positions3 = generate_border_nodes(n_border_nodes, space_size)
+	plt.show()
+	node_positions = node_positions1 + node_positions2 + node_positions3
+	return node_positions
+
+node_positions = generate_nodes(1000)
 
 def calc_dist(P1, P2): #Die Länge im Koordinatensystem #vielleicht nützlich für die automatische Generierung später
 	return np.sqrt((P1[0] - P2[0])**2 + (P1[1] - P2[1])**2)
@@ -74,7 +94,7 @@ def generate_edges_without_weights(node_coordinates): #Vielleicht weights am End
 		nodes_sorted = np.argsort(distance_matrix[i])
 		nodes_sorted = nodes_sorted[1:] #Die Kante selbst aus dem Knoten löschen
 		while num_existing_edges < num_edges or not incoming:
-			distance_index = int(np.round(np.random.rand()**3 * (num_nodes-1)))
+			distance_index = int(np.round(np.random.rand()**3 * (num_nodes-2)))
 			second_node = nodes_sorted[distance_index]
 			binary_edge_matrix[i, second_node] = 1
 			num_existing_edges += 1
