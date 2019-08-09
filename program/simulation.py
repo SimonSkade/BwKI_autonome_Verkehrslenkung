@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import networkx as nx
 
 #In dieser Datei sollen verschiedene Funktionen geschrieben werden, die eine realistische und praktische Simulation ermöglichen
 
@@ -63,15 +64,24 @@ def generate_nodes(n_nodes, n_centers=4, space_size=1000):
 	n_nodes_around_centers = int(n_nodes * 0.8)
 	n_spread_nodes = int(n_nodes * 0.13)
 	space_size = space_size
+	node_positions1 = []
 	for x in range(n_centers):
-	    node_positions1 = generate_nodepositions_per_center(abs(int(np.random.normal(loc=n_nodes/n_centers, scale=15))), space_size) #Testen (dann muss nur simulation.py aufgerufen werden)
+	    node_positions1 += generate_nodepositions_per_center(abs(int(np.random.normal(loc=n_nodes/n_centers, scale=15))), space_size) #Testen (dann muss nur simulation.py aufgerufen werden)
 	node_positions2 = generate_random_nodes(n_spread_nodes, space_size)
 	node_positions3 = generate_border_nodes(n_border_nodes, space_size)
 	plt.show()
 	node_positions = node_positions1 + node_positions2 + node_positions3
 	return node_positions
 
-node_positions = generate_nodes(1000)
+def plot_edges(node_positions, binary_edge_matrix):
+	G = nx.DiGraph()
+	for i in range(len(node_positions)):
+		for j in range(len(node_positions)):
+			if binary_edge_matrix[i, j] == 1:
+				G.add_edge(i, j)
+	nx.draw(G, pos=node_positions, node_size=8, egde_size= 1)
+	plt.show()
+
 
 def calc_dist(P1, P2): #Die Länge im Koordinatensystem #vielleicht nützlich für die automatische Generierung später
 	return np.sqrt((P1[0] - P2[0])**2 + (P1[1] - P2[1])**2)
@@ -105,4 +115,6 @@ def generate_edges_without_weights(node_coordinates): #Vielleicht weights am End
 	return binary_edge_matrix
 
 
-generate_edges_without_weights(node_positions)
+node_positions = generate_nodes(100, 2)
+binary_edge_matrix = generate_edges_without_weights(node_positions)
+plot_edges(node_positions, binary_edge_matrix)
