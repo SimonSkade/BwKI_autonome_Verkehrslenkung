@@ -38,10 +38,10 @@ def generate_border_nodes(n_border_nodes):
     node_positions_y = np.random.random_integers(low=0, high=1, size=n_border_nodes) 
     for i in range(n_border_nodes):
         if node_positions_x[i] == 1:
-            node_positions_x[i] = np.random.randint(low=0, high=1)*space_size
+            node_positions_x[i] = np.random.choice(2, 1)*space_size
             node_positions_y[i] = np.random.randint(low=0, high=space_size)
         else:
-            node_positions_y[i] = np.random.randint(low=0, high=1)*space_size
+            node_positions_y[i] = np.random.choice(2, 1)*space_size
             node_positions_x[i] = np.random.randint(low=0, high=space_size)
         node_positions.append((int(node_positions_x[i]), int(node_positions_y[i])))
     fig = plt.figure()
@@ -53,7 +53,7 @@ n_border_nodes = 5
 n_centers = 5
 n_nodes = 100
 for x in range(n_centers):
-    node_positions = generate_nodepositions_per_center(int(np.random.normal(loc=n_nodes/n_centers, scale=15))) #Testen (dann muss nur simulation.py aufgerufen werden)
+    node_positions = generate_nodepositions_per_center(abs(int(np.random.normal(loc=n_nodes/n_centers, scale=15)))) #Testen (dann muss nur simulation.py aufgerufen werden)
 generate_border_nodes(n_border_nodes)
     #Funktionierte nicht --> bitte besser testen
 
