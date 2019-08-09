@@ -6,29 +6,29 @@ import networkx as nx
 
 #Mehrere Zentren wären gut
 def generate_nodepositions_per_center(n_nodes, space_size): #generiert für jedes Zentrum die Positionen für die Knoten, Anzahl vorgegeben, Normalverteilung um Zentrum, Ränder automatisch generiert
-    space_size = space_size
-    scale_radius = space_size / 10
-    node_positions = []
-    node_positions_x = np.zeros(n_nodes, dtype=np.intc) #Arbeitsweise: x- und y-Werte werden getrennt dargestellt
-    node_positions_y = np.zeros(n_nodes, dtype=np.intc) #Wenn das Zentrum sehr nah am Rand liegt, kommt es zu Problemen
-    center_position_x = np.random.randint(low=1.5*scale_radius, high=space_size-1.5*scale_radius)
-    center_position_y = np.random.randint(low=1.5*scale_radius, high=space_size-1.5*scale_radius)
-    for i in range(n_nodes):
-        node_positions_x[i] = np.round(np.random.normal(loc=center_position_x, scale=scale_radius)) #möglicherweise Knoten außerhalb des Koordinatensystems, deswegen Z. 12-15
-        if node_positions_x[i] < 0:
-            node_positions_x[i] = 0
-        elif node_positions_x[i] > space_size:
-            node_positions_x[i] = space_size
-        node_positions_y[i] = np.round(np.random.normal(loc=center_position_y, scale=scale_radius)) #dasselbe für y-Werte
-        if node_positions_y[i] < 0:
-            node_positions_y[i] = 0
-        elif node_positions_y[i] > space_size:
-            node_positions_y[i] = space_size
-        node_positions.append((int(node_positions_x[i]), int(node_positions_y[i])))
-    #plt.scatter(node_positions_x, node_positions_y) #aus Interesse plotten
-    #plt.scatter(center_position_x, center_position_y, color='red')
-    #Ich habe die Rückgabe geändert zu einer Liste von Knoten mit den Koordinaten
-    return node_positions
+	space_size = space_size
+	scale_radius = space_size / 10
+	node_positions = []
+	node_positions_x = np.zeros(n_nodes, dtype=np.intc) #Arbeitsweise: x- und y-Werte werden getrennt dargestellt
+	node_positions_y = np.zeros(n_nodes, dtype=np.intc) #Wenn das Zentrum sehr nah am Rand liegt, kommt es zu Problemen
+	center_position_x = np.random.randint(low=1.5*scale_radius, high=space_size-1.5*scale_radius)
+	center_position_y = np.random.randint(low=1.5*scale_radius, high=space_size-1.5*scale_radius)
+	for i in range(n_nodes):
+		node_positions_x[i] = np.round(np.random.normal(loc=center_position_x, scale=scale_radius)) #möglicherweise Knoten außerhalb des Koordinatensystems, deswegen Z. 12-15
+		if node_positions_x[i] < 0:
+			node_positions_x[i] = 0
+		elif node_positions_x[i] > space_size:
+			node_positions_x[i] = space_size
+		node_positions_y[i] = np.round(np.random.normal(loc=center_position_y, scale=scale_radius)) #dasselbe für y-Werte
+		if node_positions_y[i] < 0:
+			node_positions_y[i] = 0
+		elif node_positions_y[i] > space_size:
+			node_positions_y[i] = space_size
+		node_positions.append((int(node_positions_x[i]), int(node_positions_y[i])))
+	#plt.scatter(node_positions_x, node_positions_y) #aus Interesse plotten
+	#plt.scatter(center_position_x, center_position_y, color='red')
+	#Ich habe die Rückgabe geändert zu einer Liste von Knoten mit den Koordinaten
+	return node_positions
 
 def generate_random_nodes(n_nodes, space_size):
 	scale_radius = space_size / 10
@@ -36,27 +36,27 @@ def generate_random_nodes(n_nodes, space_size):
 	node_positions_y = []
 	random_nodes = []
 	for i in range(n_nodes):
-		node_positions_x.append(np.random.randint(low=0.5*scale_radius, high=space_size-0.5*scale_radius))
-		node_positions_y.append(np.random.randint(low=0.5*scale_radius, high=space_size-0.5*scale_radius))
+		node_positions_x.append(np.random.randint(low=scale_radius, high=space_size-scale_radius))
+		node_positions_y.append(np.random.randint(low=scale_radius, high=space_size-scale_radius))
 		random_nodes.append((node_positions_x[i], node_positions_y[i]))
 	#plt.scatter(node_positions_x, node_positions_y)
 	return random_nodes
 
 def generate_border_nodes(n_border_nodes, space_size):
-    space_size = space_size
-    node_positions = []
-    node_positions_x = np.random.random_integers(low=0, high=1, size=n_border_nodes) 
-    node_positions_y = np.random.random_integers(low=0, high=1, size=n_border_nodes) 
-    for i in range(n_border_nodes):
-        if node_positions_x[i] == 1:
-            node_positions_x[i] = np.random.choice(2, 1)*space_size
-            node_positions_y[i] = np.random.randint(low=0, high=space_size)
-        else:
-            node_positions_y[i] = np.random.choice(2, 1)*space_size
-            node_positions_x[i] = np.random.randint(low=0, high=space_size)
-        node_positions.append((int(node_positions_x[i]), int(node_positions_y[i])))
-    #plt.scatter(node_positions_x, node_positions_y) #aus Interesse plotten
-    return node_positions
+	space_size = space_size
+	node_positions = []
+	node_positions_x = np.random.randint(low=0, high=1, size=n_border_nodes) 
+	node_positions_y = np.random.randint(low=0, high=1, size=n_border_nodes) 
+	for i in range(n_border_nodes):
+		if node_positions_x[i] == 1:
+			node_positions_x[i] = np.random.choice(2, 1)*space_size
+			node_positions_y[i] = np.random.randint(low=0, high=space_size)
+		else:
+			node_positions_y[i] = np.random.choice(2, 1)*space_size
+			node_positions_x[i] = np.random.randint(low=0, high=space_size)
+		node_positions.append((int(node_positions_x[i]), int(node_positions_y[i])))
+	#plt.scatter(node_positions_x, node_positions_y) #aus Interesse plotten
+	return node_positions
 
 def generate_nodes(n_nodes, n_centers=4, space_size=1000):
 	n_border_nodes = int(n_nodes * 0.07)
@@ -66,7 +66,7 @@ def generate_nodes(n_nodes, n_centers=4, space_size=1000):
 	space_size = space_size
 	node_positions1 = []
 	for x in range(n_centers):
-	    node_positions1 += generate_nodepositions_per_center(abs(int(np.random.normal(loc=n_nodes/n_centers, scale=15))), space_size) #Testen (dann muss nur simulation.py aufgerufen werden)
+		node_positions1 += generate_nodepositions_per_center(abs(int(np.random.normal(loc=n_nodes/n_centers, scale=15))), space_size) #Testen (dann muss nur simulation.py aufgerufen werden)
 	node_positions2 = generate_random_nodes(n_spread_nodes, space_size)
 	node_positions3 = generate_border_nodes(n_border_nodes, space_size)
 	#plt.show()
@@ -134,3 +134,4 @@ def generate_weights_of_edges(binary_edge_matrix, distance_matrix):
 node_positions = generate_nodes(100, 2)
 binary_edge_matrix, distance_matrix = generate_edges_without_weights(node_positions)
 #plot_edges(node_positions, binary_edge_matrix)
+a_matrix, b_matrix, c_matrix, d_matrix = generate_weights_of_edges(binary_edge_matrix, distance_matrix)
