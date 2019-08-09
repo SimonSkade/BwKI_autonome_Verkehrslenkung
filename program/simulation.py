@@ -24,10 +24,8 @@ def generate_nodepositions_per_center(n_nodes): #generiert für jedes Zentrum di
         elif node_positions_y[i] > space_size:
             node_positions_y[i] = space_size
         node_positions.append((int(node_positions_x[i]), int(node_positions_y[i])))
-    fig = plt.figure()
     plt.scatter(node_positions_x, node_positions_y) #aus Interesse plotten
     plt.scatter(center_position_x, center_position_y, color='red')
-    plt.show()
     #Ich habe die Rückgabe geändert zu einer Liste von Knoten mit den Koordinaten
     return node_positions
 
@@ -44,18 +42,16 @@ def generate_border_nodes(n_border_nodes):
             node_positions_y[i] = np.random.randint(low=0, high=1)*space_size
             node_positions_x[i] = np.random.randint(low=0, high=space_size)
         node_positions.append((int(node_positions_x[i]), int(node_positions_y[i])))
-    fig = plt.figure()
     plt.scatter(node_positions_x, node_positions_y) #aus Interesse plotten
-    plt.show()
     return node_positions
 
-n_border_nodes = 5
-n_centers = 5
-n_nodes = 100
+n_border_nodes = 100
+n_centers = 4
+n_nodes = 1000
 for x in range(n_centers):
     node_positions = generate_nodepositions_per_center(int(np.random.normal(loc=n_nodes/n_centers, scale=15))) #Testen (dann muss nur simulation.py aufgerufen werden)
 generate_border_nodes(n_border_nodes)
-    #Funktionierte nicht --> bitte besser testen
+plt.show()
 
 def calc_dist(P1, P2): #Die Länge im Koordinatensystem #vielleicht nützlich für die automatische Generierung später
 	return np.sqrt((P1[0] - P2[0])**2 + (P1[1] - P2[1])**2)
