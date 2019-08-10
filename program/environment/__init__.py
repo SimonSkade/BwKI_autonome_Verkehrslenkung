@@ -1,6 +1,6 @@
 import numpy as np
 
-MAX_CYCLES = 100000
+MAX_CYCLES = 10000
 SHOW_GRAPHICAL_SIMULATION = True
 UPDATE_PERIOD = 100
 AUTO_GENERATE_RATE = 0.7
@@ -86,7 +86,7 @@ def manual_simulation(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATI
 	cycle_numbers, start_node_ids, end_node_ids = extract_data_from_file(input_file) #output muss sortiert sein
 	for cycle in range(MAX_CYCLES):
 		try:
-			if cycle_numbers[0] == cycle:
+			while cycle_numbers[0] == cycle:
 				new_car = car.Car(number_cars_generated, start_node_ids[0], end_node_ids[0])
 				net.network.add_car(new_car.actual_edge)
 				cars[number_cars_generated] = new_car
