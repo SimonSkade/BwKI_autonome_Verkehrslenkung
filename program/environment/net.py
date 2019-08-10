@@ -50,7 +50,7 @@ class Net:#Stellt das Netzwerk dar
 		edge_nr = 0
 		for i in range(n_vertexes):
 			for j in range(n_vertexes):
-				if data_a[i, j] != 0:
+				if data_d[i, j] != 0:
 					self.edges.append(Edge(edge_nr, i, j, data_a[i, j], data_b[i, j], data_c[i, j], data_d[i, j]))
 					self.vertexes[i].add_edgeID(j, edge_nr)
 					edge_nr += 1

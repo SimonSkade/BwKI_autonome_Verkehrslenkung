@@ -51,7 +51,7 @@ def initialize_network(file): #Liest die benötigten Daten aus einer Datei ein u
 		for i, line in enumerate(lines):
 			columns.append([])
 			for stringnumber in line.split(" "):
-				columns[i].append(int(stringnumber))
+				columns[i].append(float(stringnumber))
 		return np.array(columns)	
 
 	with open(file, "r") as f:
