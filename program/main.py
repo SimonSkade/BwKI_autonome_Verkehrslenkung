@@ -13,7 +13,7 @@ if __name__=='__main__': #kann man das auch noch anders kontrollieren, dass ein 
     n_nodes = 100
     n_centers = 2
     sm.generate_network(n_nodes, n_centers)
-    #sm.save_network("../manual_example_data/test_saved_network.txt")
+    sm.save_network("../manual_example_data/test_saved_network.txt")
     sm.realistic_simulation()
     #environment.plot_with_networkx()
     

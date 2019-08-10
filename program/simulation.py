@@ -106,7 +106,8 @@ def generate_edges_without_weights(node_coordinates): #Vielleicht weights am End
 		nodes_sorted = np.argsort(distance_matrix[i])
 		nodes_sorted = nodes_sorted[1:] #Die Kante selbst aus dem Knoten löschen
 		while num_existing_edges < num_edges or not incoming:
-			distance_index = int(np.round(np.random.rand()**3 * (num_nodes-2)))
+			distance_index = int(np.round(np.random.rand()**10 * (num_nodes-2)))
+			print(distance_index)
 			second_node = nodes_sorted[distance_index]
 			binary_edge_matrix[i, second_node] = 1
 			num_existing_edges += 1
