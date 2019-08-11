@@ -99,7 +99,7 @@ def generate_edges_without_weights(node_coordinates): #Vielleicht weights am End
 				distance_matrix[i, j] = calc_dist(node_coordinates[i], node_coordinates[j])
 	binary_edge_matrix = np.zeros((num_nodes, num_nodes), dtype=np.intc)
 	for i, position in enumerate(node_coordinates):
-		num_edges = np.random.choice(np.arange(1,6), p=[0.1, 0.1, 0.45, 0.33, 0.02])
+		num_edges = np.random.choice(np.arange(1,6), p=[0.1, 0.3, 0.4, 0.2, 0])
 		num_existing_edges = np.sum(binary_edge_matrix[i])
 		incoming = True #muss nicht stimmen, aber wird am Ende der Schleife korrigiert
 		#Wenn die schleife nicht ausgeführt wird, stimmt es auf jeden Fall
@@ -109,11 +109,11 @@ def generate_edges_without_weights(node_coordinates): #Vielleicht weights am End
 			distance_index = int(np.round(np.random.rand()**10 * (num_nodes-2)))
 			second_node = nodes_sorted[distance_index]
 			binary_edge_matrix[i, second_node] = 1
-			num_existing_edges += 1
 			is_one_way = np.random.rand()
 			if is_one_way < 0.95:
 				binary_edge_matrix[second_node, i] = 1
 			incoming = False if np.sum(binary_edge_matrix[:, i]) == 0 else True
+			num_existing_edges = np.sum(binary_edge_matrix[i])
 	return binary_edge_matrix, distance_matrix
 
 def generate_weights_of_edges(binary_edge_matrix, distance_matrix):
