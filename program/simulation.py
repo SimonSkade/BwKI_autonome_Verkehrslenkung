@@ -116,18 +116,18 @@ def generate_edges_without_weights(node_coordinates): #Vielleicht weights am End
 
 def generate_weights_of_edges(binary_edge_matrix, distance_matrix):
 	a_matrix, b_matrix, c_matrix, d_matrix = np.zeros(binary_edge_matrix.shape), np.zeros(binary_edge_matrix.shape), np.zeros(binary_edge_matrix.shape), np.zeros(binary_edge_matrix.shape)
-	k = 30
-	g = 1
-	f = 30
-	h = 10
-	l = 0.15
+	k = 0.2
+	g = 0.0025
+	f = 0.000000025
+	h = 0.2
+	l = 0.05
 	for i in range(binary_edge_matrix.shape[0]):
 		for j in range(binary_edge_matrix.shape[0]):
 			if binary_edge_matrix[i, j] == 1:
-				a_matrix[i, j] = abs(np.random.normal(loc=h, scale=h/5)) * distance_matrix[i, j]
-				b_matrix[i, j] = abs(np.random.normal(loc=l, scale=l/5)) * distance_matrix[i, j]
-				c_matrix[i, j] = abs(np.random.normal(loc=f, scale=f/5)) * 1/(distance_matrix[i, j] + 1/3)
-				d_matrix[i, j] = np.sqrt(abs(np.random.normal(loc=k, scale=k/5)) * distance_matrix[i, j]) + abs(np.random.normal(loc=g, scale=g/5)) * distance_matrix[i, j]
+				a_matrix[i, j] = abs(np.random.normal(loc=h, scale=h/10)) * distance_matrix[i, j]
+				b_matrix[i, j] = abs(np.random.normal(loc=l, scale=l/10)) * distance_matrix[i, j]
+				c_matrix[i, j] = abs(np.random.normal(loc=f, scale=f/10)) * 1/(distance_matrix[i, j] + 1/3)
+				d_matrix[i, j] = np.sqrt(abs(np.random.normal(loc=k, scale=k/10)) * distance_matrix[i, j]) + abs(np.random.normal(loc=g, scale=g/10)) * distance_matrix[i, j]
 	return a_matrix, b_matrix, c_matrix, d_matrix
 
 def generate_network(n_nodes, n_centers=2):
@@ -165,4 +165,7 @@ def save_network(filename):
 			file.write(str(d_matrix[i,-1]) + "\n")
 		file.write("\n")
 		file.close()
-	
+
+binary_edge_matrix, distance_matrix = generate_edges_without_weights(generate_random_nodes(100, 1000))	
+a_matrix, b_matrix, c_matrix, d_matrix = generate_weights_of_edges(binary_edge_matrix, distance_matrix)
+print(c_matrix)
