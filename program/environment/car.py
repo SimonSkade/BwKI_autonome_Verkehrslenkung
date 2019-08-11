@@ -36,7 +36,10 @@ class Car: #Objekte von Car stellen Autos dar
 					min_node_value = value
 					actual_node_ID = key
 					actual_node_value = value
-			del unvisited[actual_node_ID]
+			try:
+				del unvisited[actual_node_ID]
+			except KeyError:
+				raise Exception("Das generierte Netzwerk war leider nicht zusammenhängend, bitte probiere es erneut!")
 			if actual_node_ID == end_node_ID:
 				break
 			for connecting_node_id, weight in enumerate(graph_matrix[actual_node_ID]):
