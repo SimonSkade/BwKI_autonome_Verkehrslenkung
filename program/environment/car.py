@@ -12,7 +12,7 @@ class Car: #Objekte von Car stellen Autos dar
 		self.edge_ids = []
 		for i in range(len(self.end_node_IDs) - 1, 0, -1): #Pfade von Zwischenknoten zum Endknoten berechnen
 			self.djikstra(self.end_node_IDs[i-1], self.end_node_IDs[i])
-		self.djikstra(self.start_node_ID, self.end_node_IDs[0])# Pfad von Startknoten zum (ersten) Emdknoten berechnen
+		self.djikstra(self.start_node_ID, self.end_node_IDs[0])# Pfad von Startknoten zum (ersten) Endknoten berechnen
 		self.actual_edge = self.edge_ids[0]
 		self.future_edge_IDs = self.edge_ids[1:]
 
@@ -55,14 +55,33 @@ class Car: #Objekte von Car stellen Autos dar
 			self.edge_ids.insert(0, node_before.edgesIDs[actual_node_ID])
 			actual_node_ID = node_before.ID
 
+	def step(self, edge_id):
+		done = False
+		reward = -1
+		self.edge_ids.append(edge_id)
+		next_node_id = net.network.edges[edge_id].v2_id
+		next_state = calc_state(next_node_id, self.end_node_IDs[0])
+		if next_node_id == self.end_node_IDs[0]:
+		    done = True
+		    reward = 50
+		    del self.edge_node_IDs[0]
+		    next_state = None
+		    if self.edge_node_IDs:
+		        next_state = calc_state(next_node_id, self.end_node_IDs[0])
+		return next_state, done, reward
 
 
-		#visited_nodes = [start_node]
-		#next_edges = []
-		#super_duper_way_of_djikstra_edge_IDs = []
-		#def get_next_vertex_ID(visited_nodes):
-			#next_edges.append(visited_nodes.connections) #iterieren!, Liste ordnen? oder einfach so lassen
-			#"return next_edges.connections.getlowestconnection" -->ordnen wäre für "getlowestconnection" besser oder so...
-		#while get_next_vertex_ID(visited_node_IDs) != end_node_ID:
-		#	visited_node_IDs.append(get_next_vertex_ID(visited_node_IDs))
+
+
+def calc_state(actual_node_id, end_node_id):
+    input_edge_array = np.zeros((len(net.network.edges)))
+    possible_edge_ids = net.network.nodes[actual_node_id].edgesIDs[net.network.nodes[actual_node_id].connections]
+    for edge_id in possible_edge_ids.values():
+        input_edge_array[edge_id] = net.network.edges[edge_id].weight
+    intput_node_array = np.zeros((len(net.network.vertexes)))
+    intput_node_array[end_node_id] = 1
+    return np.concatenate((input_edge_array, input_node_array))
+
+
+
 

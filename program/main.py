@@ -9,11 +9,12 @@ if __name__=='__main__': #kann man das auch noch anders kontrollieren, dass ein 
     #environment.initialize_network(input_file_network) #Netzwerk einlesen
     #environment.plot_with_networkx() #Netzwerk plotten
     import simulation as sm
-    n_nodes = 100
+    n_nodes = 10
     n_centers = 2
     sm.generate_network(n_nodes, n_centers)
-    sm.save_network("../manual_example_data/test_saved_network.txt")
-    sm.realistic_simulation()
+    print(environment.car.calc_state(0, 9))
+    #sm.save_network("../manual_example_data/test_saved_network.txt")
+    #sm.realistic_simulation()
     #environment.plot_with_networkx()
     #input_file_cars = "../manual_example_data/test_einlesedatei_autos.txt"
     #input_file_cars = "../manual_example_data/einlesedatei_braess_paradoxon_autos.txt"
