@@ -5,7 +5,7 @@ graph_matrix = net.network.graph_matrix
 vertexes = net.network.vertexes
 
 class Car: #Objekte von Car stellen Autos dar
-	def __init__(self, ID, start_node_ID, end_node_IDs, edge_IDs=None):
+	def __init__(self, ID, start_node_ID, end_node_IDs):
 		self.ID = ID
 		self.start_node_ID = start_node_ID
 		self.end_node_IDs = end_node_IDs #Ist eine Liste!, auch wenn es meistens nur ein Element enthält
@@ -64,9 +64,9 @@ class Car: #Objekte von Car stellen Autos dar
 		if next_node_id == self.end_node_IDs[0]:
 		    done = True
 		    reward = 50
-		    del self.edge_node_IDs[0]
+		    del self.end_node_IDs[0]
 		    next_state = None
-		    if self.edge_node_IDs:
+		    if self.end_node_IDs:
 		        next_state = calc_state(next_node_id, self.end_node_IDs[0])
 		return next_state, done, reward
 
@@ -75,11 +75,11 @@ class Car: #Objekte von Car stellen Autos dar
 
 def calc_state(actual_node_id, end_node_id):
     input_edge_array = np.zeros((len(net.network.edges)))
-    possible_edge_ids = net.network.nodes[actual_node_id].edgesIDs[net.network.nodes[actual_node_id].connections]
-    for edge_id in possible_edge_ids.values():
+    possible_edge_ids = [net.network.vertexes[actual_node_id].edgesIDs[x] for x in net.network.vertexes[actual_node_id].connections]
+    for edge_id in possible_edge_ids:
         input_edge_array[edge_id] = net.network.edges[edge_id].weight
-    intput_node_array = np.zeros((len(net.network.vertexes)))
-    intput_node_array[end_node_id] = 1
+    input_node_array = np.zeros((len(net.network.vertexes)))
+    input_node_array[end_node_id] = 1
     return np.concatenate((input_edge_array, input_node_array))
 
 

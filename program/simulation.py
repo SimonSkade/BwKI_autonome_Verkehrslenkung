@@ -67,7 +67,7 @@ def generate_nodes(n_nodes, n_centers=4, space_size=1000):
 	space_size = space_size
 	node_positions1 = []
 	for x in range(n_centers):
-		node_positions1 += generate_nodepositions_per_center(abs(int(np.random.normal(loc=n_nodes/n_centers, scale=15))), space_size) #Testen (dann muss nur simulation.py aufgerufen werden)
+		node_positions1 += generate_nodepositions_per_center(int(n_nodes_around_centers/n_centers), space_size) #Testen (dann muss nur simulation.py aufgerufen werden)
 	node_positions2 = generate_random_nodes(n_spread_nodes, space_size)
 	node_positions3 = generate_border_nodes(n_border_nodes, space_size)
 	#plt.show()

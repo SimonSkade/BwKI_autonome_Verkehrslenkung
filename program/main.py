@@ -12,7 +12,11 @@ if __name__=='__main__': #kann man das auch noch anders kontrollieren, dass ein 
     n_nodes = 10
     n_centers = 2
     sm.generate_network(n_nodes, n_centers)
-    print(environment.car.calc_state(0, 9))
+    from environment import car, net
+    print(len(net.network.vertexes))
+    mycar = car.Car(1, 1, [3])
+    possible_edge_ids = [net.network.vertexes[1].edgesIDs[x] for x in net.network.vertexes[1].connections]
+    print(mycar.step(possible_edge_ids[0]))
     #sm.save_network("../manual_example_data/test_saved_network.txt")
     #sm.realistic_simulation()
     #environment.plot_with_networkx()
