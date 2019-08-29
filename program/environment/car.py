@@ -57,7 +57,8 @@ class Car: #Objekte von Car stellen Autos dar
 
 	def step(self, edge_id):
 		done = False
-		reward = -1
+		avg_weight = np.mean([x.weight for x in net.network.edges])
+		reward = -net.network.edges[edge_id].weight/avg_weight
 		self.edge_ids.append(edge_id)
 		next_node_id = net.network.edges[edge_id].v2_id
 		next_state = calc_state(next_node_id, self.end_node_IDs[0])
