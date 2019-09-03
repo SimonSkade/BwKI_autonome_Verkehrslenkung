@@ -19,7 +19,7 @@ class KI:
 		n_out = m_in
 		#model1 = nn.Sequential(OrderedDict([("fc1_n", nn.Linear(n_in, n_hidden1)), ("ReLU1_n", nn.ReLU())])) #für n
 		#model2 = nn.Sequential(OrderedDict([("fc1_m", nn.Linear(m_in, m_hidden1)), ("ReLU1_m", nn.ReLU())])) #für m
-		model3 = nn.Sequential(nn.Linear((n_in+m_in), (n_hidden1+m_hidden1), nn.ReLU(), nn.Linear((n_hidden1+m_hidden1), hidden2), nn.ReLU(), nn.Linear(hidden2, n_out), nn.Sigmoid()))
+		model3 = nn.Sequential(nn.Linear((n_in+m_in), (n_hidden1+m_hidden1), nn.ReLU(), nn.Linear((n_hidden1+m_hidden1), hidden2), nn.ReLU(), nn.Linear(hidden2, n_out), nn.Sigmoid())) #the network
 
 	def train(self, alpha=ALPHA, epsilon=EPSILON, gamma=GAMMA, epochs=EPOCHS, alpha_reduce=ALPHA_REDUCE_RATE, epsilon_reduce=EPSILON_REDUCE_RATE):
 		for i in range(epochs):
