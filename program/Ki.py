@@ -19,7 +19,6 @@ class KI:
         e_hidden1 = 2*e_in
         hidden2 = 2*e_in
         n_out = e_in
-        pass
         #model_nodes = nn.Sequential(OrderedDict([("fc1_n", nn.Linear(n_in, n_hidden1)), ("ReLU1_n", nn.ReLU())])) #für nodes
         #model_edges = nn.Sequential(OrderedDict([("fc1_m", nn.Linear(m_in, m_hidden1)), ("ReLU1_m", nn.ReLU())])) #für edges
         #model3 = nn.Sequential(nn.Linear((n_in+m_in), (n_hidden1+m_hidden1), nn.ReLU(), nn.Linear((n_hidden1+m_hidden1), hidden2), nn.ReLU(), nn.Linear(hidden2, n_out), nn.Sigmoid())) #the network
