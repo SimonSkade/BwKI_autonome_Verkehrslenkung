@@ -1,5 +1,8 @@
 import numpy as np
 
+#Die KI funktioniert mit den Simulationen aus __init__ bisher nicht
+
+
 MAX_CYCLES = 10000
 SHOW_GRAPHICAL_SIMULATION = True
 UPDATE_PERIOD = 100

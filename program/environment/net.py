@@ -62,15 +62,21 @@ class Net:#Stellt das Netzwerk dar
 	def add_car(self, edge_ID, num=1):
 		edge = self.edges[edge_ID]
 		edge.n_cars += num
+		old_weight = edge.weight
 		edge.calc_weight()
 		self.graph_matrix[edge.v1_id, edge.v2_id] = edge.weight
+		diff = edge.weight - old_weight
+		return diff
 
 	#Netzwerk anpassen, wenn ein Auto eine Kante verlässt
 	def remove_car(self, edge_ID, num=1):
 		edge = self.edges[edge_ID]
 		edge.n_cars -= num
+		old_weight = edge.weight
 		edge.calc_weight()
 		self.graph_matrix[edge.v1_id, edge.v2_id] = edge.weight
+		diff = edge.weight - old_weight
+		return diff
 
 
 def initialize_network(positions, data_a, data_b, data_c, data_d):#initiert das Netzwerk

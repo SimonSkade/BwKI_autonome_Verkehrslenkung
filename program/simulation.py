@@ -1,8 +1,42 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
-from environment import net
+from environment import net, cars
+import Ki
+
 #In dieser Datei sollen verschiedene Funktionen geschrieben werden, die eine realistische und praktische Simulation ermöglichen
+
+
+
+class Action:#Stellt einen Kantenwechsel eines Autos zu einer bestimmten Zeit dar
+	def __init__(self, actual_cycle, car_ID):
+		self.car_ID = car_ID
+		self.edge_ID = cars[car_ID].actual_edge
+		self.cycle_nr = net.network.edges[self.edge_ID].weight + actual_cycle
+
+	def perform_action(self, actual_cycle): #führt die Aktion aus
+		#assert self.cycle_nr == actual_cycle
+		edge1_node1_ID = net.network.vertexes[net.network.edges[self.edge_ID].v1_id]
+		edge1_node2_ID = net.network.vertexes[net.network.edges[self.edge_ID].v2_id]
+		if cars[self.car_ID].future_edge_IDs:
+			diff = net.network.remove_car(self.edge_ID)
+			gnn.change_weight(diff, edge1_node1_ID, edge1_node2_ID)
+			self.edge_ID = cars[self.car_ID].future_edge_IDs[0]
+			cars[self.car_ID].actual_edge = self.edge_ID
+			del cars[self.car_ID].future_edge_IDs[0]
+			diff = net.network.add_car(self.edge_ID)
+			edge2_node1_ID = net.network.vertexes[net.network.edges[self.edge_ID].v1_id]
+			edge2_node2_ID = net.network.vertexes[net.network.edges[self.edge_ID].v2_id]
+			gnn.change_weight(diff, edge2_node1_ID, edge2_node2_ID)
+			#Erstelle eine neue Aktion für den nächsten Kantenwechsel
+			new_action = Action(actual_cycle, self.car_ID)
+			index = linear_search_action_plan(new_action.cycle_nr)
+			action_plan.insert(index, new_action)
+
+		else:#Das Auto hat sein Ziel erreicht
+			diff = net.network.remove_car(self.edge_ID)
+			gnn.change_weight(diff, edge1_node1_ID, edge1_node2_ID)
+			del cars[self.car_ID] #Lösche das Auto
 
 #Mehrere Zentren wären gut
 def generate_nodepositions_per_center(n_nodes, space_size): #generiert für jedes Zentrum die Positionen für die Knoten, Anzahl vorgegeben, Normalverteilung um Zentrum, Ränder automatisch generiert
@@ -208,10 +242,10 @@ def realistic_simulation(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_G
 
 			# end_node_id = [np.random.choice([x for x in range(len(net.network.vertexes))])] #später noch mehrere End_nodes ermöglichen
 			new_car = car.Car(number_cars_generated, start_node_id, [end_node_id])
-			net.network.add_car(new_car.actual_edge)
+			diff = net.network.add_car(new_car.actual_edge)
 			env.cars[number_cars_generated] = new_car
 			#Aktion generieren
-			new_action = env.Action(cycle, number_cars_generated)
+			new_action = Action(cycle, number_cars_generated)
 			index = env.linear_search_action_plan(new_action.cycle_nr)
 			env.action_plan.insert(index, new_action)
 			number_cars_generated += 1
@@ -232,4 +266,9 @@ def realistic_simulation(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_G
 			print(f"Durchschnittliche Gesamtfahrzeit pro Auto: {avg_total_time_per_car};\nAnzahl Autos gesamt: {len(env.cars)}")
 			if SHOW_GRAPHICAL_SIMULATION:
 				env.plot_with_networkx()
+
+def create_KI():
+	global gnn_ki, gnn
+	gnn_ki = Ki.KI()
+	gnn = gnn_ki.gnn
 

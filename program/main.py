@@ -12,13 +12,14 @@ if __name__=='__main__': #kann man das auch noch anders kontrollieren, dass ein 
     n_nodes = 10
     n_centers = 2
     sm.generate_network(n_nodes, n_centers)
+    sm.create_KI()
     from environment import car, net
     print(len(net.network.vertexes))
-    mycar = car.Car(1, 1, [3])
-    possible_edge_ids = [net.network.vertexes[1].edgesIDs[x] for x in net.network.vertexes[1].connections]
-    print(mycar.step(possible_edge_ids[0]))
+    # mycar = car.Car(1, 1, [3])
+    # possible_edge_ids = [net.network.vertexes[1].edgesIDs[x] for x in net.network.vertexes[1].connections]
+    # print(mycar.step(possible_edge_ids[0]))
     #sm.save_network("../manual_example_data/test_saved_network.txt")
-    #sm.realistic_simulation()
+    sm.realistic_simulation()
     #environment.plot_with_networkx()
     #input_file_cars = "../manual_example_data/test_einlesedatei_autos.txt"
     #input_file_cars = "../manual_example_data/einlesedatei_braess_paradoxon_autos.txt"
