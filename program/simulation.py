@@ -243,6 +243,10 @@ def realistic_simulation(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_G
 			# end_node_id = [np.random.choice([x for x in range(len(net.network.vertexes))])] #später noch mehrere End_nodes ermöglichen
 			new_car = car.Car(number_cars_generated, start_node_id, [end_node_id])
 			diff = net.network.add_car(new_car.actual_edge)
+			edge_node1_ID = net.network.edges[new_car.actual_edge].v1_id
+			edge_node2_ID = net.network.edges[new_car.actual_edge].v2_id			
+			gnn.change_weight(diff, edge_node1_ID, edge_node2_ID)
+
 			env.cars[number_cars_generated] = new_car
 			#Aktion generieren
 			new_action = Action(cycle, number_cars_generated)
@@ -264,11 +268,14 @@ def realistic_simulation(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_G
 			avg_total_time_per_car = np.sum([np.sum([env.net.network.edges[x.future_edge_IDs[y]].weight for y in range(len(x.future_edge_IDs))]) + env.net.network.edges[x.actual_edge].weight for x in env.cars.values()]) / len(env.cars)
 			print(f"Absolute Flow rate: {flow_rate};\nDurchschnittliche Flow Rate: {avg_flow_rate};\nDurchschnittliche Zeit pro befahrene Kante: {avg_total_time_per_edge};")
 			print(f"Durchschnittliche Gesamtfahrzeit pro Auto: {avg_total_time_per_car};\nAnzahl Autos gesamt: {len(env.cars)}")
+			print("Normal network: ", net.network.graph_matrix)
+			print("GNN Matrix: ", gnn.gnn)
+			print("\n\n")
 			if SHOW_GRAPHICAL_SIMULATION:
 				env.plot_with_networkx()
 
 def create_KI():
 	global gnn_ki, gnn
-	gnn_ki = Ki.KI()
-	gnn = gnn_ki.gnn
+	ki = Ki.KI()
+	gnn = ki.gnn
 
