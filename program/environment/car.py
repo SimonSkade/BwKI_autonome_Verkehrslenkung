@@ -5,11 +5,15 @@ graph_matrix = net.network.graph_matrix
 vertexes = net.network.vertexes
 
 class Car: #Objekte von Car stellen Autos dar
-	def __init__(self, ID, start_node_ID, end_node_IDs):
+	def __init__(self, ID, start_node_ID, end_node_IDs, init_with_djikstra=True):
 		self.ID = ID
 		self.start_node_ID = start_node_ID
 		self.end_node_IDs = end_node_IDs #Ist eine Liste!, auch wenn es meistens nur ein Element enthält
 		self.edge_ids = []
+		if init_with_djikstra:
+			create_with_djikstra()
+		
+	def create_with_djikstra(self):
 		for i in range(len(self.end_node_IDs) - 1, 0, -1): #Pfade von Zwischenknoten zum Endknoten berechnen
 			self.djikstra(self.end_node_IDs[i-1], self.end_node_IDs[i])
 		self.djikstra(self.start_node_ID, self.end_node_IDs[0])# Pfad von Startknoten zum (ersten) Endknoten berechnen
@@ -49,7 +53,6 @@ class Car: #Objekte von Car stellen Autos dar
 						if potential_node_value < unvisited[connecting_node_id]:
 							unvisited[connecting_node_id] = potential_node_value
 							predecessor[connecting_node_id] = actual_node_ID
-		future_edges = []
 		while actual_node_ID != start_node_ID:
 			node_before = vertexes[predecessor[actual_node_ID]]
 			self.edge_ids.insert(0, node_before.edgesIDs[actual_node_ID])
@@ -70,8 +73,10 @@ class Car: #Objekte von Car stellen Autos dar
 		        next_state = calc_state(next_node_id, self.end_node_IDs[0])
 		return next_state, done, reward
 
-
-
+	def set_params(self, edge_ids):
+		self.edge_ids = edge_ids
+		self.actual_edge = self.edge_ids[0]
+		self.future_edge_IDs = self.edge_ids[1:]
 
 def calc_state(actual_node_id, end_node_id):
     input_edge_array = np.zeros((len(net.network.edges)))
