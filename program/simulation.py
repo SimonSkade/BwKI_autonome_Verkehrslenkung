@@ -275,7 +275,8 @@ def realistic_simulation(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_G
 				env.plot_with_networkx()
 
 	#Simuliert Netzwerkströme automatisch
-def realistic_simulation_with_ki(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_GRAPHICAL_SIMULATION, UPDATE_PERIOD=UPDATE_PERIOD, AUTO_GENERATE_RATE=AUTO_GENERATE_RATE):
+def realistic_simulation_with_ki(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_GRAPHICAL_SIMULATION, UPDATE_PERIOD=UPDATE_PERIOD, AUTO_GENERATE_RATE=AUTO_GENERATE_RATE): 
+#TODO: Mehrere End-Nodes möglich machen
 	global n_border_nodes, distance_matrix
 	import environment as env
 	from environment import car
@@ -308,6 +309,8 @@ def realistic_simulation_with_ki(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATIO
 
 			# end_node_id = [np.random.choice([x for x in range(len(net.network.vertexes))])] #später noch mehrere End_nodes ermöglichen
 			new_car = car.Car(number_cars_generated, start_node_id, [end_node_id], False)
+			edge_ids = ki.djikstra(start_node_id, end_node_id)	
+			new_car.set_params(edge_ids)
 			diff = net.network.add_car(new_car.actual_edge)
 			edge_node1_ID = net.network.edges[new_car.actual_edge].v1_id
 			edge_node2_ID = net.network.edges[new_car.actual_edge].v2_id			

@@ -16,7 +16,7 @@ class KI:
 		self.gnn = GNN(net.network.graph_matrix)
 
 	#berechnet den schnellsten Pfad und speichert die zukünftig abgefahrenen Kanten
-	def djikstra(self, start_node_ID, end_node_ID): 
+	def dijkstra(self, start_node_ID, end_node_ID): 
 		num_nodes = len(vertexes)
 		actual_node_ID = start_node_ID
 		actual_node_value = 0
@@ -25,7 +25,7 @@ class KI:
 		for node in	range(num_nodes):
 			if node != start_node_ID:
 				unvisited[node] = float("Inf")
-		for i, weight in enumerate(net.network.graph_matrix[actual_node_ID]):
+		for i, weight in enumerate(gnn.gnn[actual_node_ID]):
 			if weight != 0:
 				unvisited[i] = weight
 				predecessor[i] = actual_node_ID
@@ -42,7 +42,7 @@ class KI:
 				raise Exception("Das generierte Netzwerk war leider nicht zusammenhängend, bitte probiere es erneut!")
 			if actual_node_ID == end_node_ID:
 				break
-			for connecting_node_id, weight in enumerate(net.network.graph_matrix[actual_node_ID]):
+			for connecting_node_id, weight in enumerate(gnn.gnn[actual_node_ID]):
 				if weight != 0:
 					if connecting_node_id in unvisited:
 						potential_node_value = actual_node_value + weight
