@@ -51,8 +51,10 @@ def initialize_network(file): #Liest die benötigten Daten aus einer Datei ein u
 	def read_matrix(array_str):#parst string zu np array
 		lines = array_str.split("\n")
 		columns = []
+		print(len(lines))
 		for i, line in enumerate(lines):
 			columns.append([])
+			print("Now in next line")
 			for stringnumber in line.split(" "):
 				columns[i].append(float(stringnumber))
 		return np.array(columns)	
@@ -77,13 +79,16 @@ def manual_simulation(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATI
 			data = f.read()
 			lines = data.split("\n")
 			for line in lines:
-				columns = line.split(" ")
-				cycle_nr = int(columns[0])
-				index = linear_search(cycle_numbers, cycle_nr)
-				cycle_numbers.insert(index, cycle_nr)
-				start_node_ids.insert(index, int(columns[1]))
-				end_nodes = columns[2].split(",")
-				end_node_ids.insert(index, [int(node) for node in end_nodes])
+				if line == "":
+					pass
+				else:
+					columns = line.split(" ")
+					cycle_nr = int(columns[0])
+					index = linear_search(cycle_numbers, cycle_nr)
+					cycle_numbers.insert(index, cycle_nr)
+					start_node_ids.insert(index, int(columns[1]))
+					end_nodes = columns[2].split(",")
+					end_node_ids.insert(index, [int(node) for node in end_nodes])
 		return cycle_numbers, start_node_ids, end_node_ids
 	number_cars_generated = 0
 	cycle_numbers, start_node_ids, end_node_ids = extract_data_from_file(input_file) #output muss sortiert sein

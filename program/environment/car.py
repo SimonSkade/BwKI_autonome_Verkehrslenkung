@@ -11,7 +11,7 @@ class Car: #Objekte von Car stellen Autos dar
 		self.end_node_IDs = end_node_IDs #Ist eine Liste!, auch wenn es meistens nur ein Element enthält
 		self.edge_ids = []
 		if init_with_djikstra:
-			create_with_djikstra()
+			self.create_with_djikstra()
 		
 	def create_with_djikstra(self):
 		for i in range(len(self.end_node_IDs) - 1, 0, -1): #Pfade von Zwischenknoten zum Endknoten berechnen

@@ -30,7 +30,7 @@ class Edge: #Stellt die Kanten im Netzwerk dar
 		self.calc_weight()
 
 	def calc_weight(self): #später weiter präzisieren
-		self.weight = round(self.a*sigm(self.b*(self.n_cars-self.b)) + self.c*self.n_cars**2 + self.d, 4)
+		self.weight = round(self.a*sigm(self.b*(self.n_cars-self.b)) + self.c*self.n_cars + self.d, 4)
 
 	def calc_dist(self, P1, P2): #Die Länge im Koordinatensystem #vielleicht nützlich für die automatische Generierung später
 		return np.sqrt((P1[0] - P2[0])**2 + (P1[1] - P2[1])**2)
@@ -42,7 +42,7 @@ class Net:#Stellt das Netzwerk dar
 		self.vertexes = [] #Liste der Knoten
 		for i in range(n_vertexes):
 			connections = []
-			for j, relation in enumerate(data_a[i]):
+			for j, relation in enumerate(data_d[i]):
 				if relation != 0:
 					connections.append(j)
 			self.vertexes.append(Vertex(i, positions[i], connections))
