@@ -51,10 +51,8 @@ def initialize_network(file): #Liest die benötigten Daten aus einer Datei ein u
 	def read_matrix(array_str):#parst string zu np array
 		lines = array_str.split("\n")
 		columns = []
-		print(len(lines))
 		for i, line in enumerate(lines):
 			columns.append([])
-			print("Now in next line")
 			for stringnumber in line.split(" "):
 				columns[i].append(float(stringnumber))
 		return np.array(columns)	
