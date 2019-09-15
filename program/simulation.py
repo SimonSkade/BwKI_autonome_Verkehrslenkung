@@ -19,8 +19,8 @@ class Action:#Stellt einen Kantenwechsel eines Autos zu einer bestimmten Zeit da
 		edge1_node1_ID = net.network.vertexes[net.network.edges[self.edge_ID].v1_id]
 		edge1_node2_ID = net.network.vertexes[net.network.edges[self.edge_ID].v2_id]
 		if cars[self.car_ID].future_edge_IDs:
-			diff = net.network.remove_car(self.edge_ID) #komischerweise wird eins mehr geadded und weggenommen als erwartet
-			gnn.change_weight(diff, edge1_node1_ID, edge1_node2_ID)
+			diff = net.network.remove_car(self.edge_ID)
+			gnn.change_weight(diff, edge1_node1_ID, edge1_node2_ID) #nicht aufgerufen!!!
 			print(cars[self.car_ID].actual_edge, cars[self.car_ID].future_edge_IDs)
 			self.edge_ID = cars[self.car_ID].future_edge_IDs[0]
 			cars[self.car_ID].actual_edge = self.edge_ID
