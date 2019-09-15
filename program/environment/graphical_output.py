@@ -9,47 +9,46 @@ def convert_to_hex(color_red):
     color_blue = 0
     return '#%02x%02x%02x' % (color_red, color_green, color_blue)
 
-def plot_static_plotly(all_edges_x, all_edges_y, all_nodes_x, all_nodes_y, vertexes, edges):
-    edge_trace = go.Scatter(
-    x=all_edges_x, y=all_edges_y,
-    line=dict(width=0.5, color='#888', shape="spline"),
-    hovertext=["Gewicht: " + str(x.weight) for x in edges],
-    hoverinfo='text',
-    mode='lines')
+# def plot_static_plotly(all_edges_x, all_edges_y, all_nodes_x, all_nodes_y, vertexes, edges):
+#     edge_trace = go.Scatter(
+#     x=all_edges_x, y=all_edges_y,
+#     line=dict(width=0.5, color='#888', shape="spline"),
+#     hovertext=["Gewicht: " + str(x.weight) for x in edges],
+#     hoverinfo='text',
+#     mode='lines')
 
-    node_trace = go.Scatter(
-    x=all_nodes_x, y=all_nodes_y,
-    mode='markers',
-    hovertext=["Knoten " + str(x.ID) + "\n" + "--> " + str(x.connections) for x in vertexes],
-    hoverinfo="text",
-    marker=dict(
-        color="green"
-    ))
+#     node_trace = go.Scatter(
+#     x=all_nodes_x, y=all_nodes_y,
+#     mode='markers',
+#     hovertext=["Knoten " + str(x.ID) + "\n" + "--> " + str(x.connections) for x in vertexes],
+#     hoverinfo="text",
+#     marker=dict(
+#         color="green"
+#     ))
 
 
 
-    fig = go.Figure(data=[edge_trace, node_trace],
-        layout=go.Layout(
-            title='<br>BWKI KIndsköpfe - Autonomes Straßennetz',
-            titlefont_size=16,
-            showlegend=False,
-            hovermode='closest',
-            margin=dict(b=20,l=5,r=5,t=40),
-            annotations=[ dict(
-                text="Python code: <a href='https://plot.ly/ipython-notebooks/network-graphs/'> https://plot.ly/ipython-notebooks/network-graphs/</a>",
-                showarrow=False,
-                xref="paper", yref="paper",
-                x=0.005, y=-0.002 ) ],
-            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
-            )
-    fig.show()
+#     fig = go.Figure(data=[edge_trace, node_trace],
+#         layout=go.Layout(
+#             title='<br>BWKI KIndsköpfe - Autonomes Straßennetz',
+#             titlefont_size=16,
+#             showlegend=False,
+#             hovermode='closest',
+#             margin=dict(b=20,l=5,r=5,t=40),
+#             annotations=[ dict(
+#                 text="Python code: <a href='https://plot.ly/ipython-notebooks/network-graphs/'> https://plot.ly/ipython-notebooks/network-graphs/</a>",
+#                 showarrow=False,
+#                 xref="paper", yref="paper",
+#                 x=0.005, y=-0.002 ) ],
+#             xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+#             yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
+#             )
+#     fig.show()
 
 import networkx as nx
 def convert_to_networkx(nodes, edges):
     G = nx.DiGraph()
     G.add_weighted_edges_from([(x.v1_id,x.v2_id,x.weight) for x in edges])
-
     return G
 
 import matplotlib.pyplot as plt
@@ -66,10 +65,9 @@ def plot_from_networkx(nodes, edges):
         elif tief > x.weight:
             tief = x.weight
 
-    hoch = hoch - tief
     
     for x in edges:
-        percent = 1 / (hoch / (x.weight-tief))
+        percent = (x.weight - tief) / (hoch - tief) 
         color_red = int(255 * percent)
         color.append(convert_to_hex(color_red))
 

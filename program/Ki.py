@@ -1,5 +1,6 @@
 import numpy as np
 from environment import net, car
+from copy import deepcopy
 
 EPISODES = 10000
 BATCHSIZE = 500
@@ -8,14 +9,14 @@ BATCHSIZE = 500
 
 class GNN:
 	def __init__(self, graph_matrix): #Initiert das Netzwerk #Eingabe als mehrere konstante Matrizen
-		self.gnn = graph_matrix
+		self.gnn = deepcopy(graph_matrix)
 		self.diffs = []
 
 	#Netzwerk anpassen, wenn ein Auto auf eine Kante kommt
 	def change_weight(self, diff, edge_node1_id, edge_node2_id, num=1):
 		self.gnn[edge_node1_id, edge_node2_id] += diff
 		self.diffs.append(np.abs(diff))
-		if len(diffs) >= 10000:
+		if len(self.diffs) >= 10000:
 			avg_diff = np.mean(diffs)
 			unscaled_reward = avg_diff - np.abs(diff) #Es ist gut wenn der Reward negativ ist
 			reward = unscaled_reward * 1 #scale anpassen
@@ -32,6 +33,7 @@ class KI:
 		actual_node_value = 0
 		predecessor = np.zeros((num_nodes), dtype='int32')
 		unvisited = {}
+		edge_ids = []
 		for node in	range(num_nodes):
 			if node != start_node_ID:
 				unvisited[node] = float("Inf")
@@ -61,7 +63,6 @@ class KI:
 							predecessor[connecting_node_id] = actual_node_ID
 		while actual_node_ID != start_node_ID:
 			node_before = net.network.vertexes[predecessor[actual_node_ID]]
-			edge_ids = []
 			edge_ids.insert(0, node_before.edgesIDs[actual_node_ID])
 			actual_node_ID = node_before.ID
 		return edge_ids

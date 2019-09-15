@@ -19,8 +19,9 @@ class Action:#Stellt einen Kantenwechsel eines Autos zu einer bestimmten Zeit da
 		edge1_node1_ID = net.network.vertexes[net.network.edges[self.edge_ID].v1_id]
 		edge1_node2_ID = net.network.vertexes[net.network.edges[self.edge_ID].v2_id]
 		if cars[self.car_ID].future_edge_IDs:
-			diff = net.network.remove_car(self.edge_ID)
+			diff = net.network.remove_car(self.edge_ID) #komischerweise wird eins mehr geadded und weggenommen als erwartet
 			gnn.change_weight(diff, edge1_node1_ID, edge1_node2_ID)
+			print(cars[self.car_ID].actual_edge, cars[self.car_ID].future_edge_IDs)
 			self.edge_ID = cars[self.car_ID].future_edge_IDs[0]
 			cars[self.car_ID].actual_edge = self.edge_ID
 			del cars[self.car_ID].future_edge_IDs[0]
@@ -204,7 +205,7 @@ def save_network(filename):
 
 MAX_CYCLES = 100000
 SHOW_GRAPHICAL_SIMULATION = True
-UPDATE_PERIOD = 5000
+UPDATE_PERIOD = 1
 AUTO_GENERATE_RATE = 0.7
 
 
@@ -362,7 +363,7 @@ def manual_simulation_with_ki(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_
 		try:
 			while cycle_numbers[0] == cycle:
 				new_car = car.Car(number_cars_generated, start_node_ids[0], end_node_ids[0], False)
-				edge_ids = ki.dijkstra(start_node_ids[0], end_node_ids[0])	
+				edge_ids = ki.dijkstra(start_node_ids[0], end_node_ids[0])
 				new_car.set_params(edge_ids)
 				diff = net.network.add_car(new_car.actual_edge)
 				edge_node1_ID = net.network.edges[new_car.actual_edge].v1_id
@@ -374,13 +375,19 @@ def manual_simulation_with_ki(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_
 				index = env.linear_search_action_plan(new_action.cycle_nr)
 				env.action_plan.insert(index, new_action)
 				number_cars_generated += 1
+				print("Action plan: ", env.action_plan)
 				del cycle_numbers[0]
 				del start_node_ids[0]
 				del end_node_ids[0]
+		except IndexError:
+			pass
+		try:
 			while env.action_plan[0].cycle_nr == cycle: #ggf vorgesehene Aktionen ausführen
+				print("Hallo für Simon")
 				env.action_plan[0].perform_action(cycle)
 				del env.action_plan[0]
 		except IndexError:
+			print("Hallo für David")
 			pass
 		if cycle % UPDATE_PERIOD == 0:
 			print(f"Now reached cycle {cycle}. Number of cars simulated: {number_cars_generated}")
@@ -389,8 +396,8 @@ def manual_simulation_with_ki(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_
 			#avg_actual_time_per_edge = 1 / flow_rate # sollte proportional zu folgendem sein: np.sum([net.network.edges[x.actual_edge] for x in cars])
 			avg_total_time_per_edge = np.sum([np.sum([net.network.edges[x.future_edge_IDs[y]].weight for y in range(len(x.future_edge_IDs))]) + net.network.edges[x.actual_edge].weight for x in cars.values()]) / np.sum([len(x.future_edge_IDs) + 1 for x in cars.values()])
 			avg_total_time_per_car = np.sum([np.sum([net.network.edges[x.future_edge_IDs[y]].weight for y in range(len(x.future_edge_IDs))]) + net.network.edges[x.actual_edge].weight for x in cars.values()]) / len(cars)
-			print(f"Absolute Flow rate: {flow_rate};\nDurchschnittliche Flow Rate: {avg_flow_rate};\nDurchschnittliche Zeit pro befahrene Kante: {avg_total_time_per_edge};")
-			print(f"Durchschnittliche Gesamtfahrzeit pro Auto: {avg_total_time_per_car};\nAnzahl Autos gesamt: {len(cars)}")
+			#print(f"Absolute Flow rate: {flow_rate};\nDurchschnittliche Flow Rate: {avg_flow_rate};\nDurchschnittliche Zeit pro befahrene Kante: {avg_total_time_per_edge};")
+			#print(f"Durchschnittliche Gesamtfahrzeit pro Auto: {avg_total_time_per_car};\nAnzahl Autos gesamt: {len(cars)}")
 
 			if SHOW_GRAPHICAL_SIMULATION:
 				env.plot_with_networkx() #hier soll dann die Graphische Ausgabe geupdated werden
