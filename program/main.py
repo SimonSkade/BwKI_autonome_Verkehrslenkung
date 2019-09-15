@@ -22,6 +22,6 @@ if __name__=='__main__': #kann man das auch noch anders kontrollieren, dass ein 
     #environment.plot_with_networkx()
     #input_file_cars = "../manual_example_data/test_einlesedatei_autos.txt"
     input_file_cars = "../manual_example_data/einlesedatei_braess_paradoxon_autos.txt"
-    #sm.manual_simulation_with_ki(input_file_cars) #Autos manuell einlesen    
-    environment.manual_simulation(input_file_cars)
+    sm.manual_simulation_with_ki(input_file_cars) #Autos manuell einlesen    
+    #environment.manual_simulation(input_file_cars)
     #environment.automatic_simulation() #automatische Simulierung starten

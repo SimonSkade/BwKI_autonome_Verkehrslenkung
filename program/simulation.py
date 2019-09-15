@@ -202,9 +202,9 @@ def save_network(filename):
 		file.write("\n")
 		file.close()
 
-MAX_CYCLES = 10000
+MAX_CYCLES = 100000
 SHOW_GRAPHICAL_SIMULATION = True
-UPDATE_PERIOD = 100
+UPDATE_PERIOD = 5000
 AUTO_GENERATE_RATE = 0.7
 
 
