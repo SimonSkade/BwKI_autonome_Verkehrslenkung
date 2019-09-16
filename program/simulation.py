@@ -15,6 +15,7 @@ class Action:#Stellt einen Kantenwechsel eines Autos zu einer bestimmten Zeit da
 		self.cycle_nr = round(net.network.edges[self.edge_ID].weight + actual_cycle)
 
 	def perform_action(self, actual_cycle): #führt die Aktion aus
+		global number_cars_generated, cycle
 		#assert self.cycle_nr == actual_cycle
 		edge1_node1_ID = net.network.edges[self.edge_ID].v1_id
 		edge1_node2_ID = net.network.edges[self.edge_ID].v2_id
@@ -38,7 +39,21 @@ class Action:#Stellt einen Kantenwechsel eines Autos zu einer bestimmten Zeit da
 			gnn.change_weight(diff, edge1_node1_ID, edge1_node2_ID)
 			del cars[self.car_ID] #Lösche das Auto
 
-
+			################ Only for Braess Paradox #######################
+			new_car = car.Car(number_cars_generated, 0, 3, False)
+			edge_ids = ki.dijkstra(0, 3)
+			new_car.set_params(edge_ids)
+			diff = net.network.add_car(new_car.actual_edge)
+			edge_node1_ID = net.network.edges[new_car.actual_edge].v1_id
+			edge_node2_ID = net.network.edges[new_car.actual_edge].v2_id			
+			gnn.change_weight(diff, edge_node1_ID, edge_node2_ID)
+			cars[number_cars_generated] = new_car
+			#Aktion generieren
+			new_action = Action(cycle, number_cars_generated)
+			index = env.linear_search_action_plan(new_action.cycle_nr)
+			env.action_plan.insert(index, new_action)
+			number_cars_generated += 1
+			################################################################
 
 
 #Mehrere Zentren wären gut
@@ -335,6 +350,7 @@ def realistic_simulation_with_ki(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATIO
 
 #Simuliert die Verkehrsströme wie in einem input file vorgegeben
 def manual_simulation_with_ki(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_GRAPHICAL_SIMULATION, UPDATE_PERIOD=UPDATE_PERIOD):
+	global number_cars_generated, cycle
 	from environment import car
 	from environment import net
 	def extract_data_from_file(input_file):
@@ -359,9 +375,9 @@ def manual_simulation_with_ki(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_
 	for cycle in range(MAX_CYCLES):
 		try:
 			while cycle_numbers[0] == cycle:
-				new_car = car.Car(number_cars_generated, start_node_ids[0], end_node_ids[0], False)
+				new_car = car.Car(number_cars_generated, start_node_ids[0], end_node_ids[0])
 				edge_ids = ki.dijkstra(start_node_ids[0], end_node_ids[0])
-				new_car.set_params(edge_ids)
+				#new_car.set_params(edge_ids)
 				diff = net.network.add_car(new_car.actual_edge)
 				edge_node1_ID = net.network.edges[new_car.actual_edge].v1_id
 				edge_node2_ID = net.network.edges[new_car.actual_edge].v2_id			
@@ -376,6 +392,9 @@ def manual_simulation_with_ki(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_
 				del start_node_ids[0]
 				del end_node_ids[0]
 		except IndexError:
+			#print(f"Actual Car edge of Car 1: {cars[0].actual_edge} and future Edges: {cars[0].future_edge_IDs}")
+			#print(f"Actual Car edge of Car 1: {cars[4000].actual_edge} and future Edges: {cars[4000].future_edge_IDs}")
+			#print(f"Actual Car edge of Car 1: {cars[5000].actual_edge} and future Edges: {cars[5000].future_edge_IDs}")
 			pass
 		try:
 			while env.action_plan[0].cycle_nr == cycle: #ggf vorgesehene Aktionen ausführen
@@ -394,8 +413,8 @@ def manual_simulation_with_ki(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_
 			print(f"Durchschnittliche Gesamtfahrzeit pro Auto: {avg_total_time_per_car};\nAnzahl Autos gesamt: {len(cars)}")
 
 			if SHOW_GRAPHICAL_SIMULATION:
-				#env.plot_with_networkx() #hier soll dann die Graphische Ausgabe geupdated werden
 				env.plot_with_networkx_num_cars()
+				env.plot_with_networkx() #hier soll dann die Graphische Ausgabe geupdated werden
 
 
 def create_KI():
