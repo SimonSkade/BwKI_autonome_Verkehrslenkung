@@ -180,6 +180,11 @@ def static_network_plot():
 		all_edges_y.append(None)
 	graphical_output.plot_static(all_edges_x, all_edges_y, all_nodes_x, all_nodes_y, vertexes, edges)
 
+from . import graphical_output
+
 def plot_with_networkx():
-	from . import graphical_output
 	graphical_output.plot_from_networkx(net.network.vertexes, net.network.edges)
+
+
+def plot_with_networkx_num_cars():
+	graphical_output.plot_networkx_num_cars(net.network.vertexes, net.network.edges)

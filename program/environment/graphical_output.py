@@ -77,6 +77,40 @@ def plot_from_networkx(nodes, edges):
         nodemap[i] = node.position
     nx.draw(G, pos=nodemap, with_labels=True,edge_color=color)
     plt.show()
+
+
+
+def convert_to_hex_blue(color_blue):
+    color_green = 255-color_blue
+    color_red = 0
+    return '#%02x%02x%02x' % (color_red, color_green, color_blue)
+
     
 
+def plot_networkx_num_cars(nodes, edges):
+    G = convert_to_networkx(nodes, edges)
+
+    color = []
+    #Finde das kleinste und größte Gewicht
+    hoch = edges[0].n_cars
+    tief = edges[0].n_cars
+    for x in edges:
+        if hoch < x.n_cars:
+            hoch = x.n_cars
+        elif tief > x.n_cars:
+            tief = x.n_cars
+
+    
+    for x in edges:
+        percent = (x.n_cars - tief) / (hoch - tief) 
+        color_blue = int(255 * percent)
+        color.append(convert_to_hex_blue(color_blue))
+
+    nodemap = {}
+
+    for i,node in enumerate(nodes):
+        nodemap[i] = node.position
+    nx.draw(G, pos=nodemap, with_labels=True,edge_color=color)
+    plt.show()
+    
 

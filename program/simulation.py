@@ -12,32 +12,34 @@ class Action:#Stellt einen Kantenwechsel eines Autos zu einer bestimmten Zeit da
 	def __init__(self, actual_cycle, car_ID):
 		self.car_ID = car_ID
 		self.edge_ID = cars[car_ID].actual_edge
-		self.cycle_nr = net.network.edges[self.edge_ID].weight + actual_cycle
+		self.cycle_nr = round(net.network.edges[self.edge_ID].weight + actual_cycle)
 
 	def perform_action(self, actual_cycle): #führt die Aktion aus
 		#assert self.cycle_nr == actual_cycle
-		edge1_node1_ID = net.network.vertexes[net.network.edges[self.edge_ID].v1_id]
-		edge1_node2_ID = net.network.vertexes[net.network.edges[self.edge_ID].v2_id]
+		edge1_node1_ID = net.network.edges[self.edge_ID].v1_id
+		edge1_node2_ID = net.network.edges[self.edge_ID].v2_id
 		if cars[self.car_ID].future_edge_IDs:
 			diff = net.network.remove_car(self.edge_ID)
 			gnn.change_weight(diff, edge1_node1_ID, edge1_node2_ID) #nicht aufgerufen!!!
-			print(cars[self.car_ID].actual_edge, cars[self.car_ID].future_edge_IDs)
 			self.edge_ID = cars[self.car_ID].future_edge_IDs[0]
 			cars[self.car_ID].actual_edge = self.edge_ID
 			del cars[self.car_ID].future_edge_IDs[0]
 			diff = net.network.add_car(self.edge_ID)
-			edge2_node1_ID = net.network.vertexes[net.network.edges[self.edge_ID].v1_id]
-			edge2_node2_ID = net.network.vertexes[net.network.edges[self.edge_ID].v2_id]
+			edge2_node1_ID = net.network.edges[self.edge_ID].v1_id
+			edge2_node2_ID = net.network.edges[self.edge_ID].v2_id
 			gnn.change_weight(diff, edge2_node1_ID, edge2_node2_ID)
 			#Erstelle eine neue Aktion für den nächsten Kantenwechsel
 			new_action = Action(actual_cycle, self.car_ID)
-			index = linear_search_action_plan(new_action.cycle_nr)
-			action_plan.insert(index, new_action)
+			index = env.linear_search_action_plan(new_action.cycle_nr)
+			env.action_plan.insert(index, new_action)
 
 		else:#Das Auto hat sein Ziel erreicht
 			diff = net.network.remove_car(self.edge_ID)
 			gnn.change_weight(diff, edge1_node1_ID, edge1_node2_ID)
 			del cars[self.car_ID] #Lösche das Auto
+
+
+
 
 #Mehrere Zentren wären gut
 def generate_nodepositions_per_center(n_nodes, space_size): #generiert für jedes Zentrum die Positionen für die Knoten, Anzahl vorgegeben, Normalverteilung um Zentrum, Ränder automatisch generiert
@@ -205,7 +207,7 @@ def save_network(filename):
 
 MAX_CYCLES = 100000
 SHOW_GRAPHICAL_SIMULATION = True
-UPDATE_PERIOD = 1
+UPDATE_PERIOD = 2000
 AUTO_GENERATE_RATE = 0.7
 
 
@@ -218,8 +220,6 @@ def realistic_simulation(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_G
 	border_nodes_end = n_nodes - 1
 	higher_probability_factor = 4
 	prob_node = 1/(border_nodes_start + higher_probability_factor*n_border_nodes)
-	print(f"number of normal nodes: {border_nodes_start}, number of border nodes: {n_border_nodes}")
-	print(f"summed probability: {border_nodes_start * prob_node + higher_probability_factor * n_border_nodes * prob_node}")
 	for cycle in range(MAX_CYCLES):
 		while np.random.rand() < AUTO_GENERATE_RATE:
 			start_node_id, end_node_id = None, None
@@ -280,9 +280,6 @@ def realistic_simulation_with_ki(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATIO
 	border_nodes_end = n_nodes - 1
 	higher_probability_factor = 4
 	prob_node = 1/(border_nodes_start + higher_probability_factor*n_border_nodes)
-	print("prob_node: ", prob_node)
-	print(f"number of normal nodes: {border_nodes_start}, number of border nodes: {n_border_nodes}")
-	print(f"summed probability: {border_nodes_start * prob_node + higher_probability_factor * n_border_nodes * prob_node}")
 	for cycle in range(MAX_CYCLES):
 		while np.random.rand() < AUTO_GENERATE_RATE:
 			start_node_id, end_node_id = None, None
@@ -375,7 +372,6 @@ def manual_simulation_with_ki(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_
 				index = env.linear_search_action_plan(new_action.cycle_nr)
 				env.action_plan.insert(index, new_action)
 				number_cars_generated += 1
-				print("Action plan: ", env.action_plan)
 				del cycle_numbers[0]
 				del start_node_ids[0]
 				del end_node_ids[0]
@@ -383,11 +379,9 @@ def manual_simulation_with_ki(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_
 			pass
 		try:
 			while env.action_plan[0].cycle_nr == cycle: #ggf vorgesehene Aktionen ausführen
-				print("Hallo für Simon")
 				env.action_plan[0].perform_action(cycle)
 				del env.action_plan[0]
 		except IndexError:
-			print("Hallo für David")
 			pass
 		if cycle % UPDATE_PERIOD == 0:
 			print(f"Now reached cycle {cycle}. Number of cars simulated: {number_cars_generated}")
@@ -396,11 +390,12 @@ def manual_simulation_with_ki(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_
 			#avg_actual_time_per_edge = 1 / flow_rate # sollte proportional zu folgendem sein: np.sum([net.network.edges[x.actual_edge] for x in cars])
 			avg_total_time_per_edge = np.sum([np.sum([net.network.edges[x.future_edge_IDs[y]].weight for y in range(len(x.future_edge_IDs))]) + net.network.edges[x.actual_edge].weight for x in cars.values()]) / np.sum([len(x.future_edge_IDs) + 1 for x in cars.values()])
 			avg_total_time_per_car = np.sum([np.sum([net.network.edges[x.future_edge_IDs[y]].weight for y in range(len(x.future_edge_IDs))]) + net.network.edges[x.actual_edge].weight for x in cars.values()]) / len(cars)
-			#print(f"Absolute Flow rate: {flow_rate};\nDurchschnittliche Flow Rate: {avg_flow_rate};\nDurchschnittliche Zeit pro befahrene Kante: {avg_total_time_per_edge};")
-			#print(f"Durchschnittliche Gesamtfahrzeit pro Auto: {avg_total_time_per_car};\nAnzahl Autos gesamt: {len(cars)}")
+			print(f"Absolute Flow rate: {flow_rate};\nDurchschnittliche Flow Rate: {avg_flow_rate};\nDurchschnittliche Zeit pro befahrene Kante: {avg_total_time_per_edge};")
+			print(f"Durchschnittliche Gesamtfahrzeit pro Auto: {avg_total_time_per_car};\nAnzahl Autos gesamt: {len(cars)}")
 
 			if SHOW_GRAPHICAL_SIMULATION:
-				env.plot_with_networkx() #hier soll dann die Graphische Ausgabe geupdated werden
+				#env.plot_with_networkx() #hier soll dann die Graphische Ausgabe geupdated werden
+				env.plot_with_networkx_num_cars()
 
 
 def create_KI():
