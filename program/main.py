@@ -7,7 +7,7 @@ if __name__=='__main__': #kann man das auch noch anders kontrollieren, dass ein 
     #manual network input files
     #input_file_network = "../manual_example_data/test_Einlesedatei_netzwerk.txt" #muss später noch allgemein fürs repo funktionieren, nicht nur für meinen PC, ist aber nur ein test #später mit sys?
     #input_file_network = "../manual_example_data/test_saved_network.txt"
-    input_file_network = "../manual_example_data/einlesedatei_braess_paradoxon_netzwerk.txt"#Braess Paradoxon
+    input_file_network = "../manual_example_data/einlesedatei_braess_paradoxon_netzwerk.txt" #Braess Paradoxon
     environment.initialize_network(input_file_network) #Netzwerk einlesen
 
     #environment.plot_with_networkx() #Netzwerk plotten

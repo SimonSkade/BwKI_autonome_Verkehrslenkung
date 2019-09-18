@@ -336,6 +336,8 @@ def realistic_simulation_with_ki(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATIO
 			pass
 		if cycle % UPDATE_PERIOD == 0:
 			print(f"Now reached cycle {cycle}. Number of cars simulated: {number_cars_generated}")
+			print(net.network.graph_matrix)
+			print(gnn.gnn)
 			flow_rate = np.sum([x.n_cars / x.weight for x in env.net.network.edges])
 			avg_flow_rate = flow_rate/len(env.cars)
 			#avg_actual_time_per_edge = 1 / flow_rate # sollte proportional zu folgendem sein: np.sum([net.network.edges[x.actual_edge] for x in env.cars])
