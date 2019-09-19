@@ -406,6 +406,9 @@ def manual_simulation_with_ki(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_
 			pass
 		if cycle % UPDATE_PERIOD == 0:
 			print(f"Now reached cycle {cycle}. Number of cars simulated: {number_cars_generated}")
+			print(net.network.graph_matrix)
+			print(gnn.gnn)
+			print([x.n_cars for x in net.network.edges])
 			flow_rate = np.sum([x.n_cars / x.weight for x in net.network.edges])
 			avg_flow_rate = flow_rate/len(cars)
 			#avg_actual_time_per_edge = 1 / flow_rate # sollte proportional zu folgendem sein: np.sum([net.network.edges[x.actual_edge] for x in cars])

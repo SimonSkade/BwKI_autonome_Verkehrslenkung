@@ -10,17 +10,12 @@ BATCHSIZE = 500
 class GNN:
 	def __init__(self, graph_matrix): #Initiert das Netzwerk #Eingabe als mehrere konstante Matrizen
 		self.gnn = deepcopy(graph_matrix)
-		self.diffs = []
 
 	#Netzwerk anpassen, wenn ein Auto auf eine Kante kommt
 	def change_weight(self, diff, edge_node1_id, edge_node2_id, num=1):
-		self.diffs.append(np.abs(diff))
 		self.gnn[edge_node1_id, edge_node2_id] += diff
-		if len(self.diffs) >= 10000:
-			avg_diff = np.mean(self.diffs)
-			unscaled_reward = np.abs(diff) - avg_diff  #Es ist gut wenn der Reward negativ ist
-			reward = unscaled_reward * 1 #scale anpassen
-			self.gnn[edge_node1_id, edge_node2_id] += reward
+		reward = np.abs(diff)*net.network.edges[net.network.vertexes[edge_node1_id].edgesIDs[edge_node2_id]].n_cars
+		self.gnn[edge_node1_id, edge_node2_id] = net.network.graph_matrix[edge_node1_id, edge_node2_id] + reward
 
 class KI:
 	def __init__(self):
