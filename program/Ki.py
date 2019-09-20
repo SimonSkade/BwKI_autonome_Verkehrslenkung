@@ -13,9 +13,9 @@ class GNN:
 
 	#Netzwerk anpassen, wenn ein Auto auf eine Kante kommt
 	def change_weight(self, diff, edge_node1_id, edge_node2_id, num=1):
-		self.gnn[edge_node1_id, edge_node2_id] += diff
-		reward = np.abs(diff)*net.network.edges[net.network.vertexes[edge_node1_id].edgesIDs[edge_node2_id]].n_cars
-		self.gnn[edge_node1_id, edge_node2_id] = net.network.graph_matrix[edge_node1_id, edge_node2_id] + reward
+		self.gnn[edge_node1_id, edge_node2_id] += diff #wie viel Gewicht wurde verursacht?
+		reward = np.abs(diff) * net.network.edges[net.network.vertexes[edge_node1_id].edgesIDs[edge_node2_id]].n_cars #reward = Gewichtsänderung * Gewicht
+		self.gnn[edge_node1_id, edge_node2_id] = net.network.graph_matrix[edge_node1_id, edge_node2_id] + reward 
 
 class KI:
 	def __init__(self):
