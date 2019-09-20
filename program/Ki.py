@@ -4,7 +4,7 @@ from copy import deepcopy
 
 EPISODES = 10000
 BATCHSIZE = 500
-
+ALPHA = 0.1
 
 
 class GNN:
@@ -12,17 +12,20 @@ class GNN:
 		self.gnn = deepcopy(graph_matrix)
 
 	#Netzwerk anpassen, wenn ein Auto auf eine Kante kommt
-	def change_weight(self, diff, edge_node1_id, edge_node2_id, num=1):
+	def change_weight(self, diff, edge_node1_id, edge_node2_id, num=1, alpha=ALPHA):
+		edge_id = net.network.vertexes[edge_node1_id].edgesIDs[edge_node2_id]
 		self.gnn[edge_node1_id, edge_node2_id] += diff #wie viel Gewicht wurde verursacht?
-		reward = np.abs(diff) * net.network.edges[net.network.vertexes[edge_node1_id].edgesIDs[edge_node2_id]].n_cars #reward = Gewichtsänderung * Gewicht
-		self.gnn[edge_node1_id, edge_node2_id] = net.network.graph_matrix[edge_node1_id, edge_node2_id] + reward 
+		avg_edge_weight = np.mean([x.weight for x in net.network.edges])
+		diff_edge = avg_edge_weight - net.network.edges[edge_id].weight
+		reward = np.abs(diff) * net.network.edges[net.network.vertexes[edge_node1_id].edgesIDs[edge_node2_id]].n_cars + 1*(avg_edge_weight + 0.245*diff_edge) #reward = Gewichtsänderung * Gewicht
+		self.gnn[edge_node1_id, edge_node2_id] = (1-alpha) * self.gnn[edge_node1_id, edge_node2_id] + alpha * (net.network.graph_matrix[edge_node1_id, edge_node2_id] + reward) 
 
 class KI:
 	def __init__(self):
 		self.gnn = GNN(net.network.graph_matrix)
 
 	#berechnet den schnellsten Pfad und speichert die zukünftig abgefahrenen Kanten
-	def dijkstra(self, start_node_ID, end_node_ID): 
+	def dijkstra(self, start_node_ID, end_node_ID):
 		num_nodes = len(net.network.vertexes)
 		actual_node_ID = start_node_ID
 		actual_node_value = 0

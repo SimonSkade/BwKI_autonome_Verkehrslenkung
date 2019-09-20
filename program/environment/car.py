@@ -5,12 +5,13 @@ graph_matrix = net.network.graph_matrix
 vertexes = net.network.vertexes
 
 class Car: #Objekte von Car stellen Autos dar
-	def __init__(self, ID, start_node_ID, end_node_IDs, init_with_djikstra=True):
+	def __init__(self, ID, start_node_ID, end_node_IDs, cycle_created, init_with_djikstra=True):
 		self.ID = ID
 		self.start_node_ID = start_node_ID
 		self.end_node_IDs = end_node_IDs #Ist eine Liste!, auch wenn es meistens nur ein Element enthält
 		if init_with_djikstra:
 			self.create_with_djikstra()
+		self.cycle_created = cycle_created
 		
 	def create_with_djikstra(self):
 		self.edge_ids = []

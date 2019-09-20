@@ -1,6 +1,3 @@
-#!/home/simon/anaconda3/bin/python
-
-
 if __name__=='__main__': #kann man das auch noch anders kontrollieren, dass ein Teil nur ausgeführt wird, wenn die Datei von einer spezifischen anderen Datei aufgerufen/importiert wird?
     import environment
 

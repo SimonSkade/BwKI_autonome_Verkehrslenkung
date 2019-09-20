@@ -7,6 +7,7 @@ import environment as env
 from environment import car
 
 #In dieser Datei sollen verschiedene Funktionen geschrieben werden, die eine realistische und praktische Simulation ermöglichen
+duration_cars = [] 
 
 class Action:#Stellt einen Kantenwechsel eines Autos zu einer bestimmten Zeit dar
 	def __init__(self, actual_cycle, car_ID):
@@ -15,7 +16,7 @@ class Action:#Stellt einen Kantenwechsel eines Autos zu einer bestimmten Zeit da
 		self.cycle_nr = round(net.network.edges[self.edge_ID].weight + actual_cycle)
 
 	def perform_action(self, actual_cycle): #führt die Aktion aus
-		global number_cars_generated, cycle
+		global number_cars_generated, cycle, duration_cars
 		#assert self.cycle_nr == actual_cycle
 		edge1_node1_ID = net.network.edges[self.edge_ID].v1_id
 		edge1_node2_ID = net.network.edges[self.edge_ID].v2_id
@@ -37,10 +38,14 @@ class Action:#Stellt einen Kantenwechsel eines Autos zu einer bestimmten Zeit da
 		else:#Das Auto hat sein Ziel erreicht
 			diff = net.network.remove_car(self.edge_ID)
 			gnn.change_weight(diff, edge1_node1_ID, edge1_node2_ID)
+			cycles_driven = actual_cycle - cars[self.car_ID].cycle_created
+			duration_cars.insert(0, cycles_driven)
+			if len(duration_cars) >= 2000:
+                            duration_cars = duration_cars[:2000]
 			del cars[self.car_ID] #Lösche das Auto
 
 			################ Only for Braess Paradox #######################
-			new_car = car.Car(number_cars_generated, 0, 3, False)
+			new_car = car.Car(number_cars_generated, 0, 3, cycle, False)
 			edge_ids = ki.dijkstra(0, 3)
 			new_car.set_params(edge_ids)
 			diff = net.network.add_car(new_car.actual_edge)
@@ -254,7 +259,7 @@ def realistic_simulation(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATION=SHOW_G
 				end_node_id = nodes_sorted[distance_index]
 
 			# end_node_id = [np.random.choice([x for x in range(len(net.network.vertexes))])] #später noch mehrere End_nodes ermöglichen
-			new_car = car.Car(number_cars_generated, start_node_id, [end_node_id])
+			new_car = car.Car(number_cars_generated, start_node_id, [end_node_id], cycle)
 			diff = net.network.add_car(new_car.actual_edge)
 			edge_node1_ID = net.network.edges[new_car.actual_edge].v1_id
 			edge_node2_ID = net.network.edges[new_car.actual_edge].v2_id			
@@ -314,7 +319,7 @@ def realistic_simulation_with_ki(MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_SIMULATIO
 				end_node_id = nodes_sorted[distance_index]
 
 			# end_node_id = [np.random.choice([x for x in range(len(net.network.vertexes))])] #später noch mehrere End_nodes ermöglichen
-			new_car = car.Car(number_cars_generated, start_node_id, [end_node_id], False)
+			new_car = car.Car(number_cars_generated, start_node_id, [end_node_id], cycle, False)
 			edge_ids = ki.dijkstra(start_node_id, end_node_id)	
 			new_car.set_params(edge_ids)
 			diff = net.network.add_car(new_car.actual_edge)
@@ -355,6 +360,7 @@ def manual_simulation_with_ki(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_
 	global number_cars_generated, cycle
 	from environment import car
 	from environment import net
+	avg_times_car = []
 	def extract_data_from_file(input_file):
 		cycle_numbers, start_node_ids, end_node_ids = [], [], []
 		with open(input_file, "r") as f:
@@ -377,7 +383,7 @@ def manual_simulation_with_ki(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_
 	for cycle in range(MAX_CYCLES):
 		try:
 			while cycle_numbers[0] == cycle:
-				new_car = car.Car(number_cars_generated, start_node_ids[0], end_node_ids[0])
+				new_car = car.Car(number_cars_generated, start_node_ids[0], end_node_ids[0], cycle)
 				edge_ids = ki.dijkstra(start_node_ids[0], end_node_ids[0])
 				#new_car.set_params(edge_ids)
 				diff = net.network.add_car(new_car.actual_edge)
@@ -412,18 +418,24 @@ def manual_simulation_with_ki(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_
 			flow_rate = np.sum([x.n_cars / x.weight for x in net.network.edges])
 			avg_flow_rate = flow_rate/len(cars)
 			#avg_actual_time_per_edge = 1 / flow_rate # sollte proportional zu folgendem sein: np.sum([net.network.edges[x.actual_edge] for x in cars])
-			avg_total_time_per_edge = np.sum([np.sum([net.network.edges[x.future_edge_IDs[y]].weight for y in range(len(x.future_edge_IDs))]) + net.network.edges[x.actual_edge].weight for x in cars.values()]) / np.sum([len(x.future_edge_IDs) + 1 for x in cars.values()])
-			avg_total_time_per_car = np.sum([np.sum([net.network.edges[x.future_edge_IDs[y]].weight for y in range(len(x.future_edge_IDs))]) + net.network.edges[x.actual_edge].weight for x in cars.values()]) / len(cars)
+			avg_total_time_per_edge = np.sum(np.sum([net.network.edges[x.actual_edge].weight for x in cars.values()])) / len(net.network.edges)
+			avg_total_time_per_car = np.mean(duration_cars)
+			avg_times_car.append(avg_total_time_per_car)
 			print(f"Absolute Flow rate: {flow_rate};\nDurchschnittliche Flow Rate: {avg_flow_rate};\nDurchschnittliche Zeit pro befahrene Kante: {avg_total_time_per_edge};")
 			print(f"Durchschnittliche Gesamtfahrzeit pro Auto: {avg_total_time_per_car};\nAnzahl Autos gesamt: {len(cars)}")
 
 			if SHOW_GRAPHICAL_SIMULATION:
 				env.plot_with_networkx_num_cars()
 				env.plot_with_networkx() #hier soll dann die Graphische Ausgabe geupdated werden
-
-
+		if cycle % (UPDATE_PERIOD*10) == 0 and cycle != 0:
+			plot_development(avg_times_car)
+    
 def create_KI():
 	global ki, gnn
 	ki = Ki.KI()
 	gnn = ki.gnn
+	
+def plot_development(avg_times_car):
+    plt.plot(avg_times_car)
+    plt.show()
 
