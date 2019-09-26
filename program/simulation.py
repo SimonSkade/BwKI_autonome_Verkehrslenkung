@@ -226,7 +226,7 @@ def save_network(filename):
 		file.close()
 
 MAX_CYCLES = 100000
-SHOW_GRAPHICAL_SIMULATION = True
+SHOW_GRAPHICAL_SIMULATION = False
 UPDATE_PERIOD = 2000
 AUTO_GENERATE_RATE = 0.7
 
@@ -421,7 +421,7 @@ def manual_simulation_with_ki(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_
 			avg_total_time_per_edge = np.sum(np.sum([net.network.edges[x.actual_edge].weight for x in cars.values()])) / len(net.network.edges)
 			avg_total_time_per_car = np.mean(duration_cars)
 			avg_times_car.append(avg_total_time_per_car)
-			print(f"Absolute Flow rate: {flow_rate};\nDurchschnittliche Flow Rate: {avg_flow_rate};\nDurchschnittliche Zeit pro befahrene Kante: {avg_total_time_per_edge};")
+			#print(f"Absolute Flow rate: {flow_rate};\nDurchschnittliche Flow Rate: {avg_flow_rate};\nDurchschnittliche Zeit pro befahrene Kante: {avg_total_time_per_edge};")
 			print(f"Durchschnittliche Gesamtfahrzeit pro Auto: {avg_total_time_per_car};\nAnzahl Autos gesamt: {len(cars)}")
 
 			if SHOW_GRAPHICAL_SIMULATION:
