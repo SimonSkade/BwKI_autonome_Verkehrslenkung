@@ -405,6 +405,21 @@ def manual_simulation_with_ki(input_file, MAX_CYCLES=MAX_CYCLES, SHOW_GRAPHICAL_
 			#print(f"Actual Car edge of Car 1: {cars[5000].actual_edge} and future Edges: {cars[5000].future_edge_IDs}")
 			pass
 		try:
+# 			################ Only for Braess Paradox #######################
+# 			new_car = car.Car(number_cars_generated, 0, 3, cycle, False)
+# 			edge_ids = ki.dijkstra(0, 3)
+# 			new_car.set_params(edge_ids)
+# 			diff = net.network.add_car(new_car.actual_edge)
+# 			edge_node1_ID = net.network.edges[new_car.actual_edge].v1_id
+# 			edge_node2_ID = net.network.edges[new_car.actual_edge].v2_id			
+# 			gnn.change_weight(diff, edge_node1_ID, edge_node2_ID)
+# 			cars[number_cars_generated] = new_car
+# 			#Aktion generieren
+# 			new_action = Action(cycle, number_cars_generated)
+# 			index = env.linear_search_action_plan(new_action.cycle_nr)
+# 			env.action_plan.insert(index, new_action)
+# 			number_cars_generated += 1
+# 			################################################################
 			while env.action_plan[0].cycle_nr == cycle: #ggf vorgesehene Aktionen ausführen
 				env.action_plan[0].perform_action(cycle)
 				del env.action_plan[0]

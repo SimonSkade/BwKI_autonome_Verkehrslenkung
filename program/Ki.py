@@ -11,6 +11,10 @@ ALPHA = 0.001
 class GNN:
 	def __init__(self, graph_matrix): #Initiert das Netzwerk #Eingabe als mehrere konstante Matrizen
 		self.gnn = deepcopy(graph_matrix)
+		for i in range(self.gnn.shape[0]):
+                    for j in range(self.gnn.shape[1]):
+                        if self.gnn[i,j] != 0:
+                            self.gnn[i,j] = 1
 
 	#Netzwerk anpassen, wenn ein Auto auf eine Kante kommt
 	def change_weight(self, diff, edge_node1_id, edge_node2_id, num=1, alpha=ALPHA):
@@ -20,7 +24,7 @@ class GNN:
 		diff_edge = avg_edge_weight - net.network.edges[edge_id].weight
 		diff_cars_per_edge = net.network.edges[net.network.vertexes[edge_node1_id].edgesIDs[edge_node2_id]].n_cars - (len(environment.cars)/len(net.network.edges))
 		reward = 0.2*diff_cars_per_edge + np.abs(diff) * (1.25*net.network.edges[net.network.vertexes[edge_node1_id].edgesIDs[edge_node2_id]].n_cars) + 0.1*(avg_edge_weight + 0.5*diff_edge) #reward = Gewichtsänderung * Gewicht #guter Reward: negativ
-		self.gnn[edge_node1_id, edge_node2_id] = (1-alpha) * self.gnn[edge_node1_id, edge_node2_id] + alpha * (net.network.graph_matrix[edge_node1_id, edge_node2_id] + reward)
+		self.gnn[edge_node1_id, edge_node2_id] = net.network.edges[edge_id].n_cars +1 #(1-alpha) * self.gnn[edge_node1_id, edge_node2_id] + alpha * (net.network.graph_matrix[edge_node1_id, edge_node2_id] + reward)
 
 class KI:
 	def __init__(self):
